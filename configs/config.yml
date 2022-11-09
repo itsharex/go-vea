@@ -1,0 +1,34 @@
+server:
+  mode: debug
+  port: ':8081'
+
+database:
+  platform: mysql
+  host: localhost
+  port: 3306
+  dbname: go-vea
+  username: root
+  password: mysql123456
+  arg: charset=utf8mb4&parseTime=True&loc=Local
+
+logger:
+  #日志保存路径
+  path: /logs
+  #日志级别 panic fatal error warn info debug trace
+  level: 0
+  #标准输出流
+  stdout: true
+
+# token配置
+jwt:
+  # 令牌自定义标识
+  header: Authorization
+  # 令牌密钥
+  secret: abcdefghijklmnopqrstuvwxyz
+  # 令牌有效期（默认30分钟）
+  expireTime: 30
+
+redis:
+  addr: '127.0.0.1:6379'
+  password: 'redis123456'
+  rdb: 3
