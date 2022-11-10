@@ -33,7 +33,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2022-present GoEva All Rights Reserved.</span>
+      <span>Copyright © 2022-present GoVea All Rights Reserved.</span>
     </div>
   </div>
 </template>

@@ -3,7 +3,7 @@ package captcha
 import (
 	"context"
 	"fmt"
-	"go-web-template/configs"
+	"go-vea/configs"
 	"time"
 )
 

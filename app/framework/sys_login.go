@@ -3,13 +3,13 @@ package framework
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"go-web-template/app/dao/sysdao"
-	"go-web-template/app/model/system"
-	"go-web-template/app/model/system/request"
-	"go-web-template/app/model/system/response"
-	"go-web-template/app/service/syssrv"
-	"go-web-template/global"
-	"go-web-template/util/captcha"
+	"go-vea/app/dao/sysdao"
+	"go-vea/app/model/system"
+	"go-vea/app/model/system/request"
+	"go-vea/app/model/system/response"
+	"go-vea/app/service/syssrv"
+	"go-vea/global"
+	"go-vea/util/captcha"
 )
 
 type SysLoginService struct{}

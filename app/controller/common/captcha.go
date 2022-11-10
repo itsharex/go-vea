@@ -2,8 +2,8 @@ package common
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-web-template/app/common/result"
-	"go-web-template/util/captcha"
+	"go-vea/app/common/result"
+	"go-vea/util/captcha"
 )
 
 // CaptchaResult 存储验证码的结构

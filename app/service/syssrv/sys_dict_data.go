@@ -2,11 +2,11 @@ package syssrv
 
 import (
 	"context"
-	"go-web-template/app/common/page"
-	"go-web-template/app/dao/sysdao"
-	"go-web-template/app/model/system"
-	"go-web-template/app/model/system/request"
-	"go-web-template/global"
+	"go-vea/app/common/page"
+	"go-vea/app/dao/sysdao"
+	"go-vea/app/model/system"
+	"go-vea/app/model/system/request"
+	"go-vea/global"
 )
 
 type SysDictDataService struct{}

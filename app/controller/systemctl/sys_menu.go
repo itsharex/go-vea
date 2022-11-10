@@ -2,12 +2,12 @@ package systemctl
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-web-template/app/common/result"
-	"go-web-template/app/framework"
-	"go-web-template/app/model/system"
-	"go-web-template/app/model/system/request"
-	"go-web-template/app/model/system/response"
-	"go-web-template/app/service/syssrv"
+	"go-vea/app/common/result"
+	"go-vea/app/framework"
+	"go-vea/app/model/system"
+	"go-vea/app/model/system/request"
+	"go-vea/app/model/system/response"
+	"go-vea/app/service/syssrv"
 	"strconv"
 )
 

@@ -1,6 +1,6 @@
 export default {
   app: {
-    name: 'GoEva',
+    name: 'GoVea',
     copyright: ''
   },
   // 路由国际化
@@ -10,7 +10,7 @@ export default {
   },
   // 登录页面国际化
   login: {
-    title: 'GOEVA',
+    title: 'GoVea',
     username: 'Username',
     password: 'Password',
     login: 'Login',

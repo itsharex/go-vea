@@ -1,7 +1,7 @@
 package page
 
 import (
-	"go-web-template/app/common/e"
+	"go-vea/app/common/e"
 	"gorm.io/gorm"
 	"math"
 )

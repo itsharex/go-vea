@@ -1,7 +1,7 @@
 package response
 
 import (
-	"go-web-template/app/common/base"
+	"go-vea/app/common/base"
 	"time"
 )
 

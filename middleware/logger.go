@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"go-web-template/global"
+	"go-vea/global"
 	"log"
 	"os"
 	"path"

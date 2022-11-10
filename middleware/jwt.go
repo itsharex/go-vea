@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-web-template/app/common/e"
-	"go-web-template/app/common/result"
-	"go-web-template/app/framework"
-	"go-web-template/configs"
-	"go-web-template/global"
-	"go-web-template/util"
+	"go-vea/app/common/e"
+	"go-vea/app/common/result"
+	"go-vea/app/framework"
+	"go-vea/configs"
+	"go-vea/global"
+	"go-vea/util"
 	"strings"
 )
 

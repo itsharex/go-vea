@@ -2,7 +2,7 @@ package response
 
 import (
 	"encoding/json"
-	"go-web-template/app/model/system"
+	"go-vea/app/model/system"
 	"time"
 )
 

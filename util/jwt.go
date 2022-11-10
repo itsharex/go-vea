@@ -2,7 +2,7 @@ package util
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"go-web-template/configs"
+	"go-vea/configs"
 	"time"
 )
 

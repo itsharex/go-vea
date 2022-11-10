@@ -2,7 +2,7 @@ package framework
 
 import (
 	"fmt"
-	"go-web-template/app/model/system/response"
+	"go-vea/app/model/system/response"
 )
 
 type SysPermissionsService struct{}

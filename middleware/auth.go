@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-web-template/app/common/result"
-	"go-web-template/app/framework"
-	"go-web-template/global"
+	"go-vea/app/common/result"
+	"go-vea/app/framework"
+	"go-vea/global"
 )
 
 // HasPerm 验证用户是否具备某权限

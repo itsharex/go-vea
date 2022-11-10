@@ -1,4 +1,4 @@
-module go-web-template
+module go-vea
 
 go 1.19
 

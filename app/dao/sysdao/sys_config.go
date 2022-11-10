@@ -2,11 +2,11 @@ package sysdao
 
 import (
 	"context"
-	"go-web-template/app/common/e"
-	"go-web-template/app/common/page"
-	"go-web-template/app/model/system"
-	"go-web-template/app/model/system/request"
-	"go-web-template/configs"
+	"go-vea/app/common/e"
+	"go-vea/app/common/page"
+	"go-vea/app/model/system"
+	"go-vea/app/model/system/request"
+	"go-vea/configs"
 	"gorm.io/gorm"
 )
 

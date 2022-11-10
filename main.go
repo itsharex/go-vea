@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go-web-template/configs"
-	"go-web-template/router"
+	"go-vea/configs"
+	"go-vea/router"
 )
 
 func main() {

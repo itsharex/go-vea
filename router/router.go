@@ -2,10 +2,10 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-web-template/app/controller/common"
-	"go-web-template/app/controller/systemctl"
-	"go-web-template/configs"
-	"go-web-template/middleware"
+	"go-vea/app/controller/common"
+	"go-vea/app/controller/systemctl"
+	"go-vea/configs"
+	"go-vea/middleware"
 )
 
 func InitRouter() {

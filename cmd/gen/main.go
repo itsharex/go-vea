@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-web-template/global"
+	"go-vea/global"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
 	"gorm.io/gorm"

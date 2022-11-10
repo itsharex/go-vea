@@ -1,7 +1,7 @@
 package result
 
 import (
-	"go-web-template/app/common/e"
+	"go-vea/app/common/e"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
