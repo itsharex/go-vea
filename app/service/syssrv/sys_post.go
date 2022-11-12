@@ -62,3 +62,21 @@ func (*SysPostService) DeleteSysPostByIds(ctx context.Context, ids []int64) erro
 	}
 	return nil
 }
+
+func (*SysPostService) SelectPostAll(ctx context.Context) ([]*system.SysPost, error) {
+	sysPostDao := sysdao.NewSysPostDao(ctx)
+	data, err := sysPostDao.SelectAll(&request.SysPost{})
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func (*SysPostService) SelectPostListByUserId(ctx context.Context, userId int64) ([]int64, error) {
+	sysPostDao := sysdao.NewSysPostDao(ctx)
+	data, err := sysPostDao.SelectPostListByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}

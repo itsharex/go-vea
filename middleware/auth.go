@@ -45,8 +45,8 @@ func HasRole(role string) gin.HandlerFunc {
 			return
 		}
 
-		for _, sysRole := range loginUser.SysUserResp.SysRoles {
-			roleKey := sysRole.RoleKey
+		for _, s := range loginUser.SysUserResp.Roles {
+			roleKey := s.RoleKey
 			if roleKey == "admin" || role == roleKey {
 				c.Next()
 				return

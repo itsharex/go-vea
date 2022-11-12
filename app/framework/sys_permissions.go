@@ -1,8 +1,10 @@
 package framework
 
 import (
-	"fmt"
+	"context"
+	"go-vea/app/dao/sysdao"
 	"go-vea/app/model/system/response"
+	"go-vea/app/service/syssrv"
 )
 
 type SysPermissionsService struct{}
@@ -10,35 +12,46 @@ type SysPermissionsService struct{}
 var SysPermissionSrv = new(SysPermissionsService)
 
 // GetRolePermission 获取角色数据权限
-func (p *SysPermissionsService) GetRolePermission(sysUserResp *response.SysUserResp) ([]string, error) {
+func (*SysPermissionsService) GetRolePermission(ctx context.Context, sysUserResp *response.SysUserResp) ([]string, error) {
 	var rolePerms []string
 	sysUser := sysUserResp.SysUser
 	if sysUser.IsAdmin(sysUser.UserID) {
 		rolePerms = append(rolePerms, "*:*:*")
 	} else {
-		rolePerms = append(rolePerms, "addAll")
+		perms, err := syssrv.SysRoleSrv.SelectRolePermissionByUserId(ctx, sysUser)
+		if err != nil {
+			return nil, err
+		}
+		rolePerms = append(rolePerms, perms...)
 	}
 	return rolePerms, nil
 }
 
 // GetMenuPermission 获取菜单数据权限
-func (p *SysPermissionsService) GetMenuPermission(sysUserResp *response.SysUserResp) ([]string, error) {
+func (*SysPermissionsService) GetMenuPermission(ctx context.Context, sysUserResp *response.SysUserResp) ([]string, error) {
+	sysMenuDao := sysdao.NewSysMenuDao(ctx)
 	var menuPerms []string
 	sysUser := sysUserResp.SysUser
 	if sysUser.IsAdmin(sysUser.UserID) {
 		menuPerms = append(menuPerms, "*:*:*")
 	} else {
-		roleIds := sysUserResp.RoleIds
-		if roleIds != nil && len(roleIds) > 0 {
+		roles := sysUserResp.Roles
+		if roles != nil {
 			// 多角色设置permissions属性，以便数据权限匹配权限
-			for i, roleId := range roleIds {
-				fmt.Println(i, roleId)
-				//Set<String> rolePerms = menuService.selectMenuPermsByRoleId(role.getRoleId());
-				//role.setPermissions(rolePerms);
-				//perms.addAll(rolePerms);
+			for _, role := range roles {
+				rolePerms, err := sysMenuDao.SelectMenuPermsByRoleId(role.RoleID)
+				if err != nil {
+					return nil, err
+				}
+				role.Permissions = rolePerms
+				menuPerms = append(menuPerms, rolePerms...)
 			}
 		} else {
-			menuPerms = append(menuPerms, "menuService.selectMenuPermsByUserId(user.getUserId())")
+			rolePerms, err := sysMenuDao.SelectMenuPermsByUserId(sysUserResp.SysUser.UserID)
+			if err != nil {
+				return nil, err
+			}
+			menuPerms = append(menuPerms, rolePerms...)
 		}
 	}
 	return menuPerms, nil

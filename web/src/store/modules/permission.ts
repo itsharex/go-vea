@@ -3,11 +3,13 @@ import { PermissionState } from '@/types/store/permission'
 import router, { constantRoutes, dynamicRoutes } from '@/router'
 import { RouteRecordRaw } from 'vue-router'
 import { getRouters } from '@/api/auth'
+import ParentView from '@/components/ParentView'
+import InnerLink from '@/layout/components/InnerLink'
 
 const modules = import.meta.glob('../../views/**/**.vue')
 export const Layout = () => import('@/layout/index.vue')
-export const ParentView = () => import('@/component/ParentView/index.vue')
-export const InnerLink = () => import('@/layout/component/InnerLink/index.vue')
+// export const ParentView = () => import('@/component/ParentView/index.vue')
+// export const InnerLink = () => import('@/layout/component/InnerLink/index.vue')
 
 const usePermissionStore = defineStore({
   id: 'permission',

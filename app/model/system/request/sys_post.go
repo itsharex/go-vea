@@ -18,3 +18,8 @@ type SysPost struct {
 	UpdateTime time.Time `json:"updateTime"` // 更新时间
 	Remark     string    `json:"remark"`     // 备注
 }
+
+type AddUserPost struct {
+	UserId  int64   `json:"userId"`
+	PostIds []int64 `json:"postIds"`
+}

@@ -82,6 +82,67 @@ func (*SysRoleService) DeleteSysRoleByIds(ctx context.Context, ids []int64) erro
 	return nil
 }
 
+func (*SysRoleService) SelectRolesByUserId(ctx context.Context, userId int64) ([]*system.SysRole, error) {
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	userRoles, err := sysRoleDao.SelectRolePermissionByUserId(userId)
+	roles, err := sysRoleDao.SelectAll(&request.SysRole{})
+	for i, role := range roles {
+		for _, userRole := range userRoles {
+			if role.RoleID == userRole.RoleID {
+				roles[i].Flag = true
+				break
+			}
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
+}
+
+func (s *SysRoleService) SelectRollAll(ctx context.Context) ([]*system.SysRole, error) {
+	data, err := s.GetSysRoleList(ctx, &request.SysRole{})
+	if err != nil {
+		return nil, err
+	}
+	roles, ok := data.Rows.([]*system.SysRole)
+	if !ok {
+		global.Logger.Error("类型转换错误")
+		return nil, errors.New("类型转换错误")
+	}
+	return roles, err
+}
+
+func (*SysRoleService) GetRolePermission(ctx context.Context, sysUser *system.SysUser) ([]string, error) {
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	var perms []string
+	if sysUser.IsAdmin(sysUser.UserID) {
+		perms = append(perms, "admin")
+	} else {
+		roles, err := sysRoleDao.SelectRolePermissionByUserId(sysUser.UserID)
+		if err != nil {
+			return nil, err
+		}
+		for _, role := range roles {
+			perms = append(perms, role.RoleKey)
+		}
+	}
+	return perms, nil
+}
+
+func (*SysRoleService) SelectRolePermissionByUserId(ctx context.Context, user *system.SysUser) ([]string, error) {
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	var perms []string
+	roles, err := sysRoleDao.SelectRolePermissionByUserId(user.UserID)
+	if err != nil {
+		return nil, err
+	}
+	for _, role := range roles {
+		perms = append(perms, role.RoleKey)
+	}
+	return perms, nil
+}
+
 func checkRoleNameUnique(ctx context.Context, sysRole *system.SysRole) bool {
 	sysRoleDao := sysdao.NewSysRoleDao(ctx)
 	r, e := sysRoleDao.CheckRoleNameUnique(sysRole.RoleName)

@@ -1,6 +1,7 @@
 package request
 
 import (
+	"go-vea/app/model/system"
 	"time"
 )
 
@@ -29,6 +30,12 @@ type SysUser struct {
 	UpdateTime  time.Time ` json:"updateTime"`              // 更新时间
 	Remark      string    `json:"remark"`                   // 备注
 	DataScope   string    `json:"dataScope"`                // 数据范围
+}
+
+type AddSysUser struct {
+	SysUser *system.SysUser `json:"sysUser"`
+	RoleIds []int64         `json:"roleIds"`
+	PostIds []int64         `json:"postIds"`
 }
 
 type LoginBody struct {

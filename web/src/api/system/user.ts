@@ -37,19 +37,16 @@ export function updateUser(data) {
 }
 
 // 删除用户
-export function delUser(userId) {
+export function delUser(data) {
   return request({
-    url: '/system/user/' + userId,
-    method: 'delete'
+    url: '/system/user',
+    method: 'delete',
+    data: data
   })
 }
 
 // 用户密码重置
-export function resetUserPwd(userId, password) {
-  const data = {
-    userId,
-    password
-  }
+export function resetUserPwd(data) {
   return request({
     url: '/system/user/resetPwd',
     method: 'put',
@@ -122,7 +119,7 @@ export function updateAuthRole(data) {
   return request({
     url: '/system/user/authRole',
     method: 'put',
-    params: data
+    data: data
   })
 }
 

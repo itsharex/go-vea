@@ -52,7 +52,7 @@ func (dao *SysPostDao) SelectList(sysPost *request.SysPost) (p *page.Pagination,
 	return p, err
 }
 
-func (dao *SysPostDao) SelectAll(sysPost *request.SysPost) (list []system.SysPost, err error) {
+func (dao *SysPostDao) SelectAll(sysPost *request.SysPost) (list []*system.SysPost, err error) {
 	if sysPost.PostCode != "" {
 		dao.DB = dao.DB.Where("post_code = ?", sysPost.PostCode)
 	}
@@ -63,6 +63,7 @@ func (dao *SysPostDao) SelectAll(sysPost *request.SysPost) (list []system.SysPos
 		dao.DB = dao.DB.Where("status = ?", sysPost.Status)
 	}
 
+	err = dao.DB.Find(&list).Error
 	return
 }
 
@@ -85,4 +86,12 @@ func (dao *SysPostDao) DeleteById(id int64) error {
 
 func (dao *SysPostDao) DeleteByIds(ids []int64) error {
 	return dao.DB.Where("post_id in (?)", ids).Delete(&system.SysPost{}).Error
+}
+
+func (dao *SysPostDao) SelectPostListByUserId(userId int64) (list []int64, err error) {
+	err = dao.DB.Table("sys_post p").Select("p.post_id").
+		Joins("left join sys_user_post up on up.post_id = p.post_id").
+		Joins("left join sys_user u on u.user_id = up.user_id").
+		Where("u.user_id = ?", userId).Find(&list).Error
+	return
 }

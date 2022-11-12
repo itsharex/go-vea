@@ -37,12 +37,13 @@ func (s *SysLoginApi) Logout(ctx *gin.Context) {
 // GetUserInfo 获取当前登录用户信息
 func (s *SysLoginApi) GetUserInfo(ctx *gin.Context) {
 	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
+	roles, _ := syssrv.SysRoleSrv.GetRolePermission(ctx, loginUser.SysUserResp.SysUser)
 	if err != nil {
 		result.FailWithMessage(err.Error(), ctx)
 	} else {
 		userInfo := &response.UserInfo{
 			User:        loginUser.SysUserResp.SysUser,
-			Roles:       loginUser.SysUserResp.Roles,
+			Roles:       roles,
 			Permissions: loginUser.Permissions,
 		}
 		result.OkWithData(userInfo, ctx)

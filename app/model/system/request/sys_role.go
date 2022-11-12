@@ -24,3 +24,8 @@ type SysRole struct {
 	UpdateTime        time.Time `json:"updateTime"`               // 更新时间
 	Remark            string    `json:"remark"`                   // 备注
 }
+
+type AddUserRole struct {
+	UserId  int64   `json:"userId"`
+	RoleIds []int64 `json:"roleIds"`
+}

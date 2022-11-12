@@ -1,6 +1,7 @@
 package framework
 
 import (
+	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"go-vea/app/dao/sysdao"
@@ -70,28 +71,37 @@ func loadUserByUsername(ctx *gin.Context, loginBody *request.LoginBody) (*respon
 		global.Logger.Error("密码错误", err)
 		return nil, err
 	}
-	sysUserResp := buildSysUserResp(sysUser)
-	return createLoginUser(sysUserResp), err
+	sysUserResp, _ := buildSysUserResp(ctx, sysUser)
+	return createLoginUser(ctx, sysUserResp), err
 }
 
-func buildSysUserResp(sysUser *system.SysUser) *response.SysUserResp {
-	// todo
-	roles := []string{"admin"}
-	roleIds := []int64{1}
-	postIds := []int64{1}
-	sysUserResp := &response.SysUserResp{
-		SysUser: sysUser,
-		SysDept: nil,
-		Roles:   roles,
-		RoleIds: roleIds,
-		RoleId:  1,
-		PostIds: postIds,
+func buildSysUserResp(ctx context.Context, sysUser *system.SysUser) (*response.SysUserResp, error) {
+	sysDeptDao := sysdao.NewSysDeptDao(ctx)
+	sysUserRoleDao := sysdao.NewSysUserRoleDao(ctx)
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	var dept *system.SysDept
+	var roles []*system.SysRole
+	var roleIds []int64
+	sysUserResp := &response.SysUserResp{}
+	var err error
+	dept, err = sysDeptDao.SelectById(sysUser.DeptID)
+	roleIds, err = sysUserRoleDao.SelectByUserId(sysUser.UserID)
+	if roleIds != nil {
+		roles, err = sysRoleDao.SelectByRoleIds(roleIds)
+		sysUserResp.Roles = roles
+		sysUserResp.RoleIds = roleIds
 	}
-	return sysUserResp
+	if err != nil {
+		global.Logger.Error(err)
+		return nil, err
+	}
+	sysUserResp.SysUser = sysUser
+	sysUserResp.SysDept = dept
+	return sysUserResp, err
 }
 
-func createLoginUser(sysUserResp *response.SysUserResp) *response.LoginUser {
-	permissions, err := SysPermissionSrv.GetMenuPermission(sysUserResp)
+func createLoginUser(ctx context.Context, sysUserResp *response.SysUserResp) *response.LoginUser {
+	permissions, err := SysPermissionSrv.GetMenuPermission(ctx, sysUserResp)
 	if err != nil {
 		global.Logger.Error(err)
 	}

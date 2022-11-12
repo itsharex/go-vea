@@ -76,10 +76,10 @@ export const constantRoutes: Array<RouteRecordRaw> = [
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
-  /* {
+  {
     path: '/system/user-auth',
     component: Layout,
-    hidden: true,
+    meta: {hidden: true},
     permissions: ['system:user:edit'],
     children: [
       {
@@ -93,7 +93,7 @@ export const dynamicRoutes = [
   {
     path: '/system/role-auth',
     component: Layout,
-    hidden: true,
+    meta: {hidden: true},
     permissions: ['system:role:edit'],
     children: [
       {
@@ -107,7 +107,7 @@ export const dynamicRoutes = [
   {
     path: '/system/dict-data',
     component: Layout,
-    hidden: true,
+    meta: {hidden: true},
     permissions: ['system:dict:list'],
     children: [
       {
@@ -117,16 +117,16 @@ export const dynamicRoutes = [
         meta: { title: '字典数据', activeMenu: '/system/dict' }
       }
     ]
-  }, */
-  /* {
+  },
+  {
     path: '/monitor/job-log',
     component: Layout,
-    hidden: true,
+    meta: {hidden: true},
     permissions: ['monitor:job:list'],
     children: [
       {
         path: 'index',
-        component: () => import('@/views/monitor/job/log'),
+        component: () => import('@/views/monitor/job/log.vue'),
         name: 'JobLog',
         meta: { title: '调度日志', activeMenu: '/monitor/job' }
       }
@@ -135,17 +135,17 @@ export const dynamicRoutes = [
   {
     path: '/tool/gen-edit',
     component: Layout,
-    hidden: true,
+    meta: {hidden: true},
     permissions: ['tool:gen:edit'],
     children: [
       {
         path: 'index/:tableId(\\d+)',
-        component: () => import('@/views/tool/gen/editTable'),
+        component: () => import('@/views/tool/gen/editTable.vue'),
         name: 'GenEdit',
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
-  } */
+  }
 ]
 
 // createWebHashHistory hash 路由

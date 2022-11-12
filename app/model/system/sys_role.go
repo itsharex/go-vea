@@ -26,6 +26,14 @@ type SysRole struct {
 	UpdateBy          string    `gorm:"column:update_by;type:varchar(64)" json:"updateBy"`                             // 更新者
 	UpdateTime        time.Time `gorm:"column:update_time;type:int unsigned;autoUpdateTime" json:"updateTime"`         // 更新时间
 	Remark            string    `gorm:"column:remark;type:varchar(500)" json:"remark"`                                 // 备注
+	Flag              bool      `gorm:"-" json:"flag"`                                                                 //用户是否存在此角色标识 默认不存在
+	MenuIds           []int64   `gorm:"-" json:"menuIds"`
+	DeptIds           []int64   `gorm:"-" json:"deptIds"`
+	Permissions       []string  `gorm:"-" json:"permissions"`
+}
+
+func (*SysRole) IsAdmin(roleId int64) bool {
+	return roleId == 1
 }
 
 // TableName SysRole's table name

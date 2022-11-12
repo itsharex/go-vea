@@ -101,6 +101,10 @@ func InitRouter() {
 		userRoutes.PUT("", userApi.UpdateSysUser)
 		userRoutes.DELETE("", userApi.DeleteSysUser)
 		userRoutes.GET("deptTree", userApi.GetDeptTree)
+		userRoutes.PUT("authRole", userApi.InsertAuthRole)
+		userRoutes.GET("authRole/:userId", userApi.AuthRole)
+		userRoutes.PUT("resetPwd", userApi.ResetPwd)
+		userRoutes.PUT("changeStatus", userApi.ChangeStatus)
 
 		userRoutes.GET("profile", profileApi.GetProfile)
 	}

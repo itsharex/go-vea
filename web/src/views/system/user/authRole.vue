@@ -52,11 +52,13 @@
   </div>
 </template>
 
-<script setup name="AuthRole">
+<script lang="ts" setup name="AuthRole">
 import { getAuthRole, updateAuthRole } from '@/api/system/user'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
 
 const route = useRoute()
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
+const roleRef = ref<InstanceType<typeof ElTable>>();
 
 const loading = ref(true)
 const total = ref(0)
@@ -72,7 +74,7 @@ const form = ref({
 
 /** 单击选中行数据 */
 function clickRow(row) {
-  proxy.$refs['roleRef'].toggleRowSelection(row)
+  roleRef.value.toggleRowSelection(row)
 }
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
@@ -90,30 +92,34 @@ function close() {
 /** 提交按钮 */
 function submitForm() {
   const userId = form.value.userId
-  const rIds = roleIds.value.join(',')
-  updateAuthRole({ userId: userId, roleIds: rIds }).then(response => {
+  const data = {
+    userId: userId,
+    roleIds: roleIds.value
+  }
+  updateAuthRole(data).then(response => {
     proxy.$modal.msgSuccess('授权成功')
     close()
   })
 }
 
-;(() => {
+onMounted(() => {
   const userId = route.params && route.params.userId
   if (userId) {
     loading.value = true
     getAuthRole(userId).then(response => {
-      form.value = response.user
-      roles.value = response.roles
+      form.value = response.data.user
+      roles.value =  response.data.roles
       total.value = roles.value.length
       nextTick(() => {
         roles.value.forEach(row => {
           if (row.flag) {
-            proxy.$refs['roleRef'].toggleRowSelection(row)
+            roleRef.value.toggleRowSelection(row)
           }
         })
       })
       loading.value = false
     })
   }
-})()
+})
+
 </script>

@@ -118,7 +118,7 @@ func (dao *SysMenuDao) SelectMenuPermsByUserId(userId int64) (list []string, err
 	//			 left join sys_user_role ur on rm.role_id = ur.role_id
 	//			 left join sys_role r on r.role_id = ur.role_id
 	//		where m.status = '0' and r.status = '0' and ur.user_id = #{userId}
-	err = dao.DB.Table("sys_menu m").Distinct("m.perms").Select("m.perms").
+	err = dao.DB.Table("sys_menu m").Distinct("m.perms").
 		Joins("left join sys_role_menu rm on m.menu_id = rm.menu_id").
 		Joins("left join sys_user_role ur on rm.role_id = ur.role_id").
 		Joins("left join sys_role r on r.role_id = ur.role_id").
@@ -134,7 +134,7 @@ func (dao *SysMenuDao) SelectMenuPermsByRoleId(roleId int64) (list []string, err
 	//			 left join sys_role_menu rm on m.menu_id = rm.menu_id
 	//		where m.status = '0' and rm.role_id = #{roleId}
 	var perms []string
-	err = dao.DB.Table("sys_menu m").Select("m.menu_id").
+	err = dao.DB.Table("sys_menu m").Select("m.perms").
 		Joins("left join sys_role_menu rm on m.menu_id = rm.menu_id").
 		Where("rm.role_id = ?", roleId).
 		Order("m.parent_id, m.order_num").
@@ -204,20 +204,20 @@ func (dao *SysMenuDao) SelectMenuListByUserId(sysMenu *request.SysMenu) (p *page
 		Joins("left join sys_role_menu rm on m.menu_id = rm.menu_id").
 		Joins("left join sys_user_role ur on rm.role_id = ur.role_id").
 		Joins("left join sys_role ro on ur.role_id = ro.role_id").
-		Where("u.user_id = ?", sysMenu.UserId).
+		Where("ur.user_id = ?", sysMenu.UserId).
 		Find(&menuList).Error
 
 	if sysMenu.ParentID != 0 {
-		dao.DB = dao.DB.Where("parent_id = ?", sysMenu.ParentID)
+		dao.DB = dao.DB.Where("m.parent_id = ?", sysMenu.ParentID)
 	}
 	if sysMenu.MenuName != "" {
-		dao.DB = dao.DB.Where("menu_name = ?", sysMenu.MenuName)
+		dao.DB = dao.DB.Where("m.menu_name = ?", sysMenu.MenuName)
 	}
 	if sysMenu.Visible != "" {
-		dao.DB = dao.DB.Where("visible = ?", sysMenu.Visible)
+		dao.DB = dao.DB.Where("m.visible = ?", sysMenu.Visible)
 	}
 	if sysMenu.Status != "" {
-		dao.DB = dao.DB.Where("status = ?", sysMenu.Status)
+		dao.DB = dao.DB.Where("m.status = ?", sysMenu.Status)
 	}
 
 	p.Rows = menuList

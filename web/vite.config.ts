@@ -5,7 +5,10 @@ import { resolve } from 'path' // 编辑器提示 path 模块找不到，可以y
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd())
+  const { VITE_APP_ENV } = env
   return {
+    // 按实际情况修改 打包路径（就是网站前缀，例如部署到 https://aguoxing.github.io/go-vea/ 域名下，就需要填写 /go-vea/）
+    base: VITE_APP_ENV === 'production' ? '/' : '/',
     plugins: createVitePlugins(env, command === 'build'),
     resolve: {
       // https://cn.vitejs.dev/config/#resolve-alias
@@ -29,6 +32,36 @@ export default defineConfig(({ mode, command }) => {
           target: 'http://localhost:8081',
           changeOrigin: true,
           rewrite: path => path.replace(new RegExp(`^${env.VITE_APP_BASE_API}`), '')
+        }
+      }
+    },
+    build: {
+      sourcemap: false,
+      // 消除打包大小超过500kb警告
+      chunkSizeWarningLimit: 4000,
+      // Vite 2.6.x 以上需要配置 minify: "terser", terserOptions 才能生效
+      // minify: "terser",
+      // 在打包代码时移除 console.log、debugger 和 注释
+      /*terserOptions: {
+        compress: {
+          drop_console: false,
+          drop_debugger: true,
+          pure_funcs: ["console.log"]
+        },
+        format: {
+          // 删除注释
+          comments: false
+        }
+      },*/
+      rollupOptions: {
+        input: {
+          index: resolve("index.html")
+        },
+        // 静态资源分类打包
+        output: {
+          chunkFileNames: "static/js/[name]-[hash].js",
+          entryFileNames: "static/js/[name]-[hash].js",
+          assetFileNames: "static/[ext]/[name]-[hash].[ext]"
         }
       }
     }

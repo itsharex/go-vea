@@ -108,7 +108,7 @@
               <el-tree-select
                 v-model="form.deptId"
                 :data="deptOptions"
-                :props="{ value: 'id', label: 'label', children: 'children' }"
+                :props="{ value: 'deptId', label: 'deptName', children: 'children' }"
                 value-key="id"
                 placeholder="请选择归属部门"
                 check-strictly
@@ -342,11 +342,16 @@ function resetQuery() {
 }
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const userIds = row.userId || ids.value
+  let userIds = []
+  if (row.userId !== undefined) {
+    userIds.push(row.userId)
+  } else {
+    userIds = ids.value
+  }
   proxy.$modal
     .confirm('是否确认删除用户编号为"' + userIds + '"的数据项？')
     .then(function () {
-      return delUser(userIds)
+      return delUser({ids: userIds})
     })
     .then(() => {
       getList()
@@ -399,8 +404,7 @@ function handleAuthRole(row) {
 }
 /** 重置密码按钮操作 */
 function handleResetPwd(row) {
-  proxy
-    .$prompt('请输入"' + row.userName + '"的新密码', '提示', {
+  ElMessageBox.prompt('请输入"' + row.userName + '"的新密码', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       closeOnClickModal: false,
@@ -408,7 +412,7 @@ function handleResetPwd(row) {
       inputErrorMessage: '用户密码长度必须介于 5 和 20 之间'
     })
     .then(({ value }) => {
-      resetUserPwd(row.userId, value).then(response => {
+      resetUserPwd({userId: row.userId, password: value}).then(response => {
         proxy.$modal.msgSuccess('修改成功，新密码是：' + value)
       })
     })
@@ -473,9 +477,9 @@ function cancel() {
 /** 新增按钮操作 */
 function handleAdd() {
   reset()
-  getUser().then(response => {
-    postOptions.value = response.posts
-    roleOptions.value = response.roles
+  getUser("-1").then(response => {
+    postOptions.value = response.data.posts
+    roleOptions.value = response.data.roles
     open.value = true
     title.value = '添加用户'
     form.value.password = initPassword.value
@@ -486,28 +490,33 @@ function handleUpdate(row) {
   reset()
   const userId = row.userId || ids.value
   getUser(userId).then(response => {
-    form.value = response.data
-    postOptions.value = response.posts
-    roleOptions.value = response.roles
-    form.value.postIds = response.postIds
-    form.value.roleIds = response.roleIds
+    form.value = response.data.user
+    postOptions.value = response.data.posts
+    roleOptions.value = response.data.roles
+    form.value.postIds = response.data.postIds
+    form.value.roleIds = response.data.roleIds
     open.value = true
     title.value = '修改用户'
-    form.password = ''
+    form.value.password = ''
   })
 }
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs['userRef'].validate(valid => {
     if (valid) {
+      const data = {
+        sysUser: form.value,
+        postIds: form.value.postIds,
+        roleIds: form.value.roleIds
+      }
       if (form.value.userId != undefined) {
-        updateUser(form.value).then(response => {
+        updateUser(data).then(response => {
           proxy.$modal.msgSuccess('修改成功')
           open.value = false
           getList()
         })
       } else {
-        addUser(form.value).then(response => {
+        addUser(data).then(response => {
           proxy.$modal.msgSuccess('新增成功')
           open.value = false
           getList()

@@ -2,7 +2,7 @@ import useUserStore from '@/store/modules/user'
 
 function authPermission(permission) {
   const all_permission = '*:*:*'
-  const permissions = useUserStore().permissions
+  const permissions = useUserStore().perms
   if (permission && permission.length > 0) {
     return permissions.some(v => {
       return all_permission === v || v === permission
