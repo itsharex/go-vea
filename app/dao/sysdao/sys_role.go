@@ -124,3 +124,14 @@ func (dao *SysRoleDao) SelectByRoleIds(ids []int64) (roles []*system.SysRole, er
 	err = dao.DB.Where("role_id in (?)", ids).Find(&roles).Error
 	return
 }
+
+func (dao *SysRoleDao) SelectRolesByUserName(username string) (roles []*system.SysRole, err error) {
+	err = dao.DB.Table("sys_role r").
+		Distinct("r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.menu_check_strictly, r.dept_check_strictly,r.status, r.del_flag, r.create_time, r.remark ").
+		Joins("left join sys_user_role ur on ur.role_id = r.role_id").
+		Joins("left join sys_user u on u.user_id = ur.user_id").
+		Joins("left join sys_dept d on u.dept_id = d.dept_id").
+		Where("r.del_flag ='0' and u.username = ?", username).
+		Find(&roles).Error
+	return
+}

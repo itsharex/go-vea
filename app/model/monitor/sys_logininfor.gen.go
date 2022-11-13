@@ -13,7 +13,7 @@ const TableNameSysLogininfor = "sys_logininfor"
 // SysLogininfor mapped from table <sys_logininfor>
 type SysLogininfor struct {
 	InfoID        int64      `gorm:"column:info_id;type:bigint;primaryKey;autoIncrement:true" json:"infoId"` // 访问ID
-	UserName      *string    `gorm:"column:user_name;type:varchar(50)" json:"userName"`                      // 用户账号
+	Username      *string    `gorm:"column:username;type:varchar(50)" json:"username"`                       // 用户账号
 	Ipaddr        *string    `gorm:"column:ipaddr;type:varchar(128)" json:"ipaddr"`                          // 登录IP地址
 	LoginLocation *string    `gorm:"column:login_location;type:varchar(255)" json:"loginLocation"`           // 登录地点
 	Browser       *string    `gorm:"column:browser;type:varchar(50)" json:"browser"`                         // 浏览器类型

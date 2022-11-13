@@ -63,17 +63,20 @@ export type UserPageResult = PageResult<UserItem[]>
  * 用户表单类型声明
  */
 export interface UserFormData {
-  id: number | undefined
-  deptId: number
-  username: string
-  nickname: string
-  password: string
-  mobile: string
-  email: string
-  gender: number
-  status: number
-  remark: string
-  roleIds: number[]
+  userId: number | undefined
+  postId: number | undefined
+  deptId: number | undefined
+  username: string | undefined
+  nickname: string | undefined
+  gender: string | undefined
+  password: string | undefined
+  phoneNumber: string | undefined
+  email: string | undefined
+  gender: number | undefined
+  status: string | undefined
+  remark: string | undefined
+  postIds: number[] | undefined
+  roleIds: number[] | undefined
 }
 
 /**

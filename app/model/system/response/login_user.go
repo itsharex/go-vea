@@ -41,6 +41,7 @@ type UserInfo struct {
 // UserProfile 个人信息
 type UserProfile struct {
 	UserInfo  *system.SysUser `json:"userInfo"`  // 用户基本信息
+	SysDept   *system.SysDept `json:"sysDept"`   // 部门信息
 	RoleGroup string          `json:"roleGroup"` // 用户所属角色组
 	PostGroup string          `json:"postGroup"` // 用户所属岗位组
 }

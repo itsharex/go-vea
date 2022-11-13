@@ -95,3 +95,12 @@ func (dao *SysPostDao) SelectPostListByUserId(userId int64) (list []int64, err e
 		Where("u.user_id = ?", userId).Find(&list).Error
 	return
 }
+
+func (dao *SysPostDao) SelectPostsByUserName(username string) (posts []*system.SysPost, err error) {
+	err = dao.DB.Table("sys_post p").Select("p.post_id, p.post_name, p.post_code").
+		Joins("left join sys_user_post up on up.post_id = p.post_id").
+		Joins("left join sys_user u on u.user_id = up.user_id").
+		Where("u.username = ?", username).
+		Find(&posts).Error
+	return
+}

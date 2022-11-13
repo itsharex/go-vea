@@ -15,10 +15,11 @@ func (*SysProfileApi) GetProfile(ctx *gin.Context) {
 	if err != nil {
 		result.FailWithMessage(err.Error(), ctx)
 	} else {
-		roleGroup := syssrv.SysUserSrv.SelectUserRoleGroup(ctx, loginUser.SysUserResp.SysUser.UserName)
-		postGroup := syssrv.SysUserSrv.SelectUserPostGroup(ctx, loginUser.SysUserResp.SysUser.UserName)
+		roleGroup, _ := syssrv.SysUserSrv.SelectUserRoleGroup(ctx, loginUser.SysUserResp.SysUser.Username)
+		postGroup, _ := syssrv.SysUserSrv.SelectUserPostGroup(ctx, loginUser.SysUserResp.SysUser.Username)
 		userProfile := response.UserProfile{
 			UserInfo:  loginUser.SysUserResp.SysUser,
+			SysDept:   loginUser.SysUserResp.SysDept,
 			RoleGroup: roleGroup,
 			PostGroup: postGroup,
 		}
@@ -27,9 +28,13 @@ func (*SysProfileApi) GetProfile(ctx *gin.Context) {
 }
 
 func (*SysProfileApi) UpdateProfile(ctx *gin.Context) {
-
+	result.Ok(ctx)
 }
 
 func (*SysProfileApi) UpdatePassword(ctx *gin.Context) {
+	result.Ok(ctx)
+}
 
+func (*SysProfileApi) UploadAvatar(ctx *gin.Context) {
+	result.Ok(ctx)
 }

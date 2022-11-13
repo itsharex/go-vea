@@ -6,6 +6,7 @@ import (
 	"go-vea/app/common/page"
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
+	"go-vea/app/model/system/response"
 	"go-vea/configs"
 	"gorm.io/gorm"
 )
@@ -23,23 +24,23 @@ func NewSysUserDaoByDB(db *gorm.DB) *SysUserDao {
 }
 
 func (dao *SysUserDao) SelectList(sysUser *request.SysUser) (p *page.Pagination, err error) {
-	var userLIst []*system.SysUser
+	var userList []*response.SysUser
 	p = new(page.Pagination)
 
 	dao.DB = dao.DB.Table("sys_user u").
-		Select("u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber," +
-			" u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark," +
+		Select("u.user_id, u.dept_id, u.nickname, u.username, u.email, u.avatar, u.phone_number," +
+			" u.gender, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark," +
 			" d.dept_name, d.leader").
 		Joins("left join sys_dept d on u.dept_id = d.dept_id").
 		Where("u.del_flag = '0'")
-	if sysUser.UserName != "" {
-		dao.DB = dao.DB.Where("u.user_name = ?", sysUser.UserName)
+	if sysUser.Username != "" {
+		dao.DB = dao.DB.Where("u.username = ?", sysUser.Username)
 	}
 	if sysUser.Status != "" {
 		dao.DB = dao.DB.Where("u.status = ?", sysUser.Status)
 	}
-	if sysUser.Phonenumber != "" {
-		dao.DB = dao.DB.Where("u.phonenumber = ?", sysUser.Phonenumber)
+	if sysUser.PhoneNumber != "" {
+		dao.DB = dao.DB.Where("u.phone_number = ?", sysUser.PhoneNumber)
 	}
 	if sysUser.DeptID != 0 {
 		dao.DB = dao.DB.Where("u.dept_id = ?", sysUser.DeptID).
@@ -52,11 +53,11 @@ func (dao *SysUserDao) SelectList(sysUser *request.SysUser) (p *page.Pagination,
 	if sysUser.OpenPage {
 		p.PageNum = sysUser.PageNum
 		p.PageSize = sysUser.PageSize
-		err = dao.DB.Scopes(page.SelectPage(userLIst, p, dao.DB)).Find(&userLIst).Error
+		err = dao.DB.Scopes(page.SelectPage(userList, p, dao.DB)).Find(&userList).Error
 	} else {
-		err = dao.DB.Find(&userLIst).Error
+		err = dao.DB.Find(&userList).Error
 	}
-	p.Rows = userLIst
+	p.Rows = userList
 	if err != nil {
 		p.Code = e.ERROR
 		p.Msg = err.Error()
@@ -69,8 +70,8 @@ func (dao *SysUserDao) SelectAll(sysUser *request.SysUser) (list []system.SysUse
 	if sysUser.UserID != 0 {
 		dao.DB = dao.DB.Where("user_id = ?", sysUser.UserID)
 	}
-	if sysUser.UserName != "" {
-		dao.DB = dao.DB.Where("user_name = ?", sysUser.UserName)
+	if sysUser.Username != "" {
+		dao.DB = dao.DB.Where("username = ?", sysUser.Username)
 	}
 	if sysUser.Status != "" {
 		dao.DB = dao.DB.Where("status = ?", sysUser.Status)
@@ -84,7 +85,7 @@ func (dao *SysUserDao) SelectAll(sysUser *request.SysUser) (list []system.SysUse
 }
 
 func (dao *SysUserDao) SelectUserByUserName(username string) (sysUser *system.SysUser, err error) {
-	err = dao.DB.Model(&system.SysUser{}).Where("user_name=?", username).First(&sysUser).Error
+	err = dao.DB.Model(&system.SysUser{}).Where("username=?", username).First(&sysUser).Error
 	return
 }
 
@@ -111,14 +112,14 @@ func (dao *SysUserDao) DeleteByIds(ids []int64) error {
 }
 
 func (dao *SysUserDao) CheckUserNameUnique(username string) (sysUser *system.SysUser, err error) {
-	// select user_id, user_name from sys_user where user_name = #{userName} and del_flag = '0' limit 1
-	err = dao.DB.Select("user_id, user_name").Where("user_name = ? and del_flag = '0'", username).First(&sysUser).Error
+	// select user_id, username from sys_user where username = #{userName} and del_flag = '0' limit 1
+	err = dao.DB.Select("user_id, username").Where("username = ? and del_flag = '0'", username).First(&sysUser).Error
 	return sysUser, err
 }
 
 func (dao *SysUserDao) CheckPhoneUnique(phoneNumber string) (sysUser *system.SysUser, err error) {
 	// select user_id, email from sys_user where email = #{email} and del_flag = '0' limit 1
-	err = dao.DB.Select("user_id, phonenumber").Where("phonenumber = ? and del_flag = '0'", phoneNumber).First(&sysUser).Error
+	err = dao.DB.Select("user_id, phone_number").Where("phone_number = ? and del_flag = '0'", phoneNumber).First(&sysUser).Error
 	return sysUser, err
 }
 

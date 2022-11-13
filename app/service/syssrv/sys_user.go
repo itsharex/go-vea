@@ -10,6 +10,7 @@ import (
 	"go-vea/global"
 	"go-vea/util"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type SysUserService struct{}
@@ -38,7 +39,8 @@ func (*SysUserService) GetSysUserById(ctx context.Context, roleId int64) (*syste
 
 func (*SysUserService) AddSysUser(ctx context.Context, addSysUser *request.AddSysUser) error {
 	sysUserDao := sysdao.NewSysUserDao(ctx)
-	// todo Transactional
+	// Transactional begin
+	tx := sysUserDao.Begin()
 	// 新增用户信息
 	addSysUser.SysUser.Password, _ = util.PasswordHash(addSysUser.SysUser.Password)
 	err := sysUserDao.Insert(addSysUser.SysUser)
@@ -47,9 +49,12 @@ func (*SysUserService) AddSysUser(ctx context.Context, addSysUser *request.AddSy
 	// 新增用户与角色管理
 	err = addUserRole(ctx, addSysUser)
 	if err != nil {
+		tx.Rollback()
 		global.Logger.Error(err)
 		return err
 	}
+	// Transactional commit
+	tx.Commit()
 	return nil
 }
 
@@ -109,12 +114,38 @@ func (*SysUserService) DeleteSysUserByIds(ctx context.Context, ids []int64) (err
 	return nil
 }
 
-func (*SysUserService) SelectUserRoleGroup(ctx context.Context, name string) string {
-	return ""
+func (*SysUserService) SelectUserRoleGroup(ctx context.Context, username string) (string, error) {
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	roles, err := sysRoleDao.SelectRolesByUserName(username)
+	if err != nil {
+		return "", err
+	}
+	if roles != nil {
+		var roleNames []string
+		for _, role := range roles {
+			roleNames = append(roleNames, role.RoleName)
+		}
+		res := strings.Join(roleNames, ",")
+		return res, nil
+	}
+	return "", nil
 }
 
-func (*SysUserService) SelectUserPostGroup(ctx context.Context, name string) string {
-	return ""
+func (*SysUserService) SelectUserPostGroup(ctx context.Context, username string) (string, error) {
+	sysPostDao := sysdao.NewSysPostDao(ctx)
+	posts, err := sysPostDao.SelectPostsByUserName(username)
+	if err != nil {
+		return "", err
+	}
+	if posts != nil {
+		var postNames []string
+		for _, post := range posts {
+			postNames = append(postNames, post.PostName)
+		}
+		res := strings.Join(postNames, ",")
+		return res, nil
+	}
+	return "", nil
 }
 
 func (*SysUserService) ResetPwd(ctx context.Context, sysUser *system.SysUser) error {
@@ -147,7 +178,7 @@ func (*SysUserService) UpdateUserStatus(ctx *gin.Context, sysUser *system.SysUse
 
 func (*SysUserService) CheckUserNameUnique(ctx context.Context, sysUser *system.SysUser) bool {
 	sysUserDao := sysdao.NewSysUserDao(ctx)
-	data, err := sysUserDao.CheckUserNameUnique(sysUser.UserName)
+	data, err := sysUserDao.CheckUserNameUnique(sysUser.Username)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return true
@@ -163,7 +194,7 @@ func (*SysUserService) CheckUserNameUnique(ctx context.Context, sysUser *system.
 
 func (*SysUserService) CheckPhoneUnique(ctx context.Context, sysUser *system.SysUser) bool {
 	sysUserDao := sysdao.NewSysUserDao(ctx)
-	data, err := sysUserDao.CheckPhoneUnique(sysUser.Phonenumber)
+	data, err := sysUserDao.CheckPhoneUnique(sysUser.PhoneNumber)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return true

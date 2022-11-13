@@ -107,6 +107,9 @@ func InitRouter() {
 		userRoutes.PUT("changeStatus", userApi.ChangeStatus)
 
 		userRoutes.GET("profile", profileApi.GetProfile)
+		userRoutes.PUT("profile", profileApi.UpdateProfile)
+		userRoutes.PUT("updatePwd", profileApi.UpdatePassword)
+		userRoutes.POST("avatar", profileApi.UploadAvatar)
 	}
 
 	// 通知管理

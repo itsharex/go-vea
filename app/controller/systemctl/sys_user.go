@@ -69,13 +69,13 @@ func (*SysUserApi) AddSysUser(ctx *gin.Context) {
 	_ = ctx.ShouldBindJSON(&params)
 	sysUser := params.SysUser
 	if !syssrv.SysUserSrv.CheckUserNameUnique(ctx, sysUser) {
-		result.FailWithMessage("新增用户'"+sysUser.UserName+"'失败，登录账号已存在", ctx)
+		result.FailWithMessage("新增用户'"+sysUser.Username+"'失败，登录账号已存在", ctx)
 		return
-	} else if sysUser.Phonenumber != "" && !syssrv.SysUserSrv.CheckPhoneUnique(ctx, sysUser) {
-		result.FailWithMessage("新增用户'"+sysUser.UserName+"'失败，手机号码已存在", ctx)
+	} else if sysUser.PhoneNumber != "" && !syssrv.SysUserSrv.CheckPhoneUnique(ctx, sysUser) {
+		result.FailWithMessage("新增用户'"+sysUser.Username+"'失败，手机号码已存在", ctx)
 		return
 	} else if sysUser.Email != "" && !syssrv.SysUserSrv.CheckEmailUnique(ctx, sysUser) {
-		result.FailWithMessage("新增用户'"+sysUser.UserName+"'失败，邮箱账号已存在", ctx)
+		result.FailWithMessage("新增用户'"+sysUser.Username+"'失败，邮箱账号已存在", ctx)
 		return
 	}
 	err := syssrv.SysUserSrv.AddSysUser(ctx, &params)
@@ -99,13 +99,13 @@ func (*SysUserApi) UpdateSysUser(ctx *gin.Context) {
 		return
 	}
 	if !syssrv.SysUserSrv.CheckUserNameUnique(ctx, sysUser) {
-		result.FailWithMessage("修改用户'"+sysUser.UserName+"'失败，邮箱账号已存在", ctx)
+		result.FailWithMessage("修改用户'"+sysUser.Username+"'失败，邮箱账号已存在", ctx)
 		return
-	} else if sysUser.Phonenumber != "" && !syssrv.SysUserSrv.CheckPhoneUnique(ctx, sysUser) {
-		result.FailWithMessage("修改用户'"+sysUser.UserName+"'失败，邮箱账号已存在", ctx)
+	} else if sysUser.PhoneNumber != "" && !syssrv.SysUserSrv.CheckPhoneUnique(ctx, sysUser) {
+		result.FailWithMessage("修改用户'"+sysUser.Username+"'失败，邮箱账号已存在", ctx)
 		return
 	} else if sysUser.Email != "" && !syssrv.SysUserSrv.CheckEmailUnique(ctx, sysUser) {
-		result.FailWithMessage("修改用户'"+sysUser.UserName+"'失败，邮箱账号已存在", ctx)
+		result.FailWithMessage("修改用户'"+sysUser.Username+"'失败，邮箱账号已存在", ctx)
 		return
 	}
 	err := syssrv.SysUserSrv.UpdateUserById(ctx, &params)
@@ -151,7 +151,7 @@ func (*SysUserApi) ResetPwd(ctx *gin.Context) {
 		return
 	}
 	loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
-	params.UpdateBy = loginUser.SysUserResp.SysUser.UserName
+	params.UpdateBy = loginUser.SysUserResp.SysUser.Username
 	params.Password, _ = util.PasswordHash(params.Password)
 	err := syssrv.SysUserSrv.ResetPwd(ctx, &params)
 	if err != nil {
@@ -173,7 +173,7 @@ func (*SysUserApi) ChangeStatus(ctx *gin.Context) {
 		return
 	}
 	loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
-	params.UpdateBy = loginUser.SysUserResp.SysUser.UserName
+	params.UpdateBy = loginUser.SysUserResp.SysUser.Username
 	err := syssrv.SysUserSrv.UpdateUserStatus(ctx, &params)
 	if err != nil {
 		result.FailWithMessage(err.Error(), ctx)

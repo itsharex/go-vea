@@ -112,7 +112,7 @@ export const dynamicRoutes = [
     children: [
       {
         path: 'index/:dictId(\\d+)',
-        component: () => import('@/views/system/dict/data/index.vue'),
+        component: () => import('@/views/system/dict/data.vue'),
         name: 'Data',
         meta: { title: '字典数据', activeMenu: '/system/dict' }
       }

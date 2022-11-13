@@ -4,8 +4,8 @@
       <el-form-item label="登录地址" prop="ipaddr">
         <el-input v-model="queryParams.ipaddr" placeholder="请输入登录地址" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="用户名称" prop="userName">
-        <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
+      <el-form-item label="用户名称" prop="username">
+        <el-input v-model="queryParams.username" placeholder="请输入用户名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="登录状态" clearable style="width: 240px">
@@ -57,7 +57,7 @@
       <el-table-column
         label="用户名称"
         align="center"
-        prop="userName"
+        prop="username"
         :show-overflow-tooltip="true"
         sortable="custom"
         :sort-orders="['descending', 'ascending']"
@@ -105,7 +105,7 @@ const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
   ipaddr: undefined,
-  userName: undefined,
+  username: undefined,
   status: undefined,
   orderByColumn: undefined,
   isAsc: undefined
@@ -137,7 +137,7 @@ function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.infoId)
   multiple.value = !selection.length
   single.value = selection.length != 1
-  selectName.value = selection.map(item => item.userName)
+  selectName.value = selection.map(item => item.username)
 }
 /** 排序触发事件 */
 function handleSortChange(column, prop, order) {

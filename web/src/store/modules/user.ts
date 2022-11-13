@@ -52,7 +52,7 @@ const useUserStore = defineStore({
             } else {
               this.roles = ['ROLE_DEFAULT']
             }
-            this.name = user.userName
+            this.name = user.username
             this.avatar = avatar
             resolve(res)
           })

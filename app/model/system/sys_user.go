@@ -14,12 +14,12 @@ const TableNameSysUser = "sys_user"
 type SysUser struct {
 	UserID      int64      `gorm:"column:user_id;type:bigint;primaryKey;autoIncrement:true" json:"userId"` // 用户ID
 	DeptID      int64      `gorm:"column:dept_id;type:bigint" json:"deptId"`                               // 部门ID
-	UserName    string     `gorm:"column:user_name;type:varchar(30);not null" json:"userName"`             // 用户账号
-	NickName    string     `gorm:"column:nick_name;type:varchar(30);not null" json:"nickName"`             // 用户昵称
+	Username    string     `gorm:"column:username;type:varchar(30);not null" json:"username"`              // 用户账号
+	Nickname    string     `gorm:"column:nickname;type:varchar(30);not null" json:"nickname"`              // 用户昵称
 	UserType    string     `gorm:"column:user_type;type:varchar(2);default:00" json:"userType"`            // 用户类型（00系统用户）
 	Email       string     `gorm:"column:email;type:varchar(50)" json:"email"`                             // 用户邮箱
-	Phonenumber string     `gorm:"column:phonenumber;type:varchar(11)" json:"phonenumber"`                 // 手机号码
-	Sex         string     `gorm:"column:sex;type:char(1);default:0" json:"sex"`                           // 用户性别（0男 1女 2未知）
+	PhoneNumber string     `gorm:"column:phone_number;type:varchar(11)" json:"phoneNumber"`                // 手机号码
+	Gender      string     `gorm:"column:gender;type:char(1);default:0" json:"gender"`                     // 用户性别（0男 1女 2未知）
 	Avatar      string     `gorm:"column:avatar;type:varchar(100)" json:"avatar"`                          // 头像地址
 	Password    string     `gorm:"column:password;type:varchar(100)" json:"password"`                      // 密码
 	Status      string     `gorm:"column:status;type:char(1);default:0" json:"status"`                     // 帐号状态（0正常 1停用）

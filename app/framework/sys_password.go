@@ -20,7 +20,7 @@ const LockTime = 10 * time.Minute
 
 func (s *SysPasswordService) Validate(sysUser *system.SysUser, loginBody *request.LoginBody) error {
 
-	retryCount, err := global.Redis.Get(context.Background(), getCacheKey(sysUser.UserName)).Int()
+	retryCount, err := global.Redis.Get(context.Background(), getCacheKey(sysUser.Username)).Int()
 	if err != nil {
 		retryCount = 0
 	}
@@ -33,11 +33,11 @@ func (s *SysPasswordService) Validate(sysUser *system.SysUser, loginBody *reques
 		// todo 记录登录日志
 
 		// 重试5次 锁10分钟
-		global.Redis.Set(context.Background(), getCacheKey(sysUser.UserName), retryCount, LockTime)
+		global.Redis.Set(context.Background(), getCacheKey(sysUser.Username), retryCount, LockTime)
 		return errors.New("密码错误")
 	} else {
 		// 成功 删除重试记录
-		clearLoginRecordCache(sysUser.UserName)
+		clearLoginRecordCache(sysUser.Username)
 	}
 	return nil
 }
