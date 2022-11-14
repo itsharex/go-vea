@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
+    <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">{{ $t('login.title') }}</h3>
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
@@ -46,7 +46,6 @@ import useUserStore from '@/store/modules/user'
 
 const userStore = useUserStore()
 const router = useRouter()
-const { proxy } = getCurrentInstance()
 
 const loginForm = ref({
   username: 'admin',
@@ -70,8 +69,10 @@ const captchaEnabled = ref(true)
 const register = ref(false)
 const redirect = ref(undefined)
 
+const loginFormRef = ref<ElForm>(null)
+
 function handleLogin() {
-  proxy.$refs.loginRef.validate(valid => {
+  loginFormRef.value?.validate((valid:any) => {
     if (valid) {
       loading.value = true
       // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码
@@ -104,7 +105,7 @@ function handleLogin() {
 
 function getCode() {
   getCodeImg().then(res => {
-    captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled
+    captchaEnabled.value = res.data.captchaEnabled === undefined ? true : res.data.captchaEnabled
     if (captchaEnabled.value) {
       codeUrl.value = res.data.base64Blob
       loginForm.value.uuid = res.data.id

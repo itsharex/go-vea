@@ -1,6 +1,6 @@
 <template>
   <div class="register">
-    <el-form ref="registerRef" :model="registerForm" :rules="registerRules" class="register-form">
+    <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" class="register-form">
       <h3 class="title">Go后台管理系统</h3>
       <el-form-item prop="username">
         <el-input v-model="registerForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
@@ -45,9 +45,10 @@
 <script lang="ts" setup>
 import { ElMessageBox } from 'element-plus'
 import { getCodeImg, register } from '@/api/auth'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
 
 const router = useRouter()
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 
 const registerForm = ref({
   username: '',
@@ -56,6 +57,8 @@ const registerForm = ref({
   code: '',
   uuid: ''
 })
+
+const registerFormRef = ref<ElForm>(null)
 
 const equalToPassword = (rule, value, callback) => {
   if (registerForm.value.password !== value) {
@@ -86,7 +89,8 @@ const loading = ref(false)
 const captchaEnabled = ref(true)
 
 function handleRegister() {
-  proxy.$refs.registerRef.validate(valid => {
+  // proxy.$refs.registerFormRef.validate((valid:any) => {
+  registerFormRef.value?.validate((valid:any) => {
     if (valid) {
       loading.value = true
       register(registerForm.value)
@@ -113,10 +117,10 @@ function handleRegister() {
 
 function getCode() {
   getCodeImg().then(res => {
-    captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled
+    captchaEnabled.value = res.data.captchaEnabled === undefined ? true : res.data.captchaEnabled
     if (captchaEnabled.value) {
-      codeUrl.value = 'data:image/gif;base64,' + res.img
-      registerForm.value.uuid = res.uuid
+      codeUrl.value = res.data.base64Blob
+      registerForm.value.uuid = res.data.id
     }
   })
 }
