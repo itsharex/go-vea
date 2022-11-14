@@ -152,8 +152,8 @@ func (*SysMenuService) SelectMenuTreeByUserId(ctx context.Context, sysUser *syst
 
 func (*SysMenuService) SelectMenuListByRoleId(ctx context.Context, roleId int64) ([]int64, error) {
 	sysMenuDao := sysdao.NewSysMenuDao(ctx)
-	// todo 根据roleId查询
-	sysRole := &system.SysRole{}
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	sysRole, err := sysRoleDao.SelectById(roleId)
 	menuListByRoleId := &request.MenuListByRoleId{
 		RoleId:              sysRole.RoleID,
 		IsMenuCheckStrictly: sysRole.MenuCheckStrictly,

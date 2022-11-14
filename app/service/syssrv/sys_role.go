@@ -8,6 +8,7 @@ import (
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/global"
+	"gorm.io/gorm"
 )
 
 type SysRoleService struct{}
@@ -53,8 +54,10 @@ func (*SysRoleService) AddSysRole(ctx context.Context, sysRole *system.SysRole) 
 	return nil
 }
 
-func (*SysRoleService) UpdateRoleById(ctx context.Context, sysRole *system.SysRole) error {
+func (*SysRoleService) UpdateRoleById(ctx context.Context, sysRole *system.SysRole) (err error) {
 	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	sysRoleMenuDao := sysdao.NewSysRoleMenuDao(ctx)
+	// todo Transactional
 	hasRoleName := checkRoleNameUnique(ctx, sysRole)
 	hasRoleKey := checkRoleKeyUnique(ctx, sysRole)
 	if hasRoleName {
@@ -64,7 +67,12 @@ func (*SysRoleService) UpdateRoleById(ctx context.Context, sysRole *system.SysRo
 		global.Logger.Error("修改失败！角色key已存在")
 		return errors.New("修改失败！角色key已存在")
 	}
-	err := sysRoleDao.UpdateById(sysRole)
+
+	// 修改角色信息
+	err = sysRoleDao.UpdateById(sysRole)
+	// 删除角色与菜单关联
+	err = sysRoleMenuDao.DeleteRoleMenuByRoleId(sysRole.RoleID)
+	err = insertRoleMenu(ctx, sysRole)
 	if err != nil {
 		global.Logger.Error(err)
 		return err
@@ -100,7 +108,7 @@ func (*SysRoleService) SelectRolesByUserId(ctx context.Context, userId int64) ([
 	return roles, nil
 }
 
-func (s *SysRoleService) SelectRollAll(ctx context.Context) ([]*system.SysRole, error) {
+func (s *SysRoleService) SelectRoleAll(ctx context.Context) ([]*system.SysRole, error) {
 	data, err := s.GetSysRoleList(ctx, &request.SysRole{})
 	if err != nil {
 		return nil, err
@@ -143,22 +151,95 @@ func (*SysRoleService) SelectRolePermissionByUserId(ctx context.Context, user *s
 	return perms, nil
 }
 
+func (*SysRoleService) AuthDataScope(ctx context.Context, sysRole *system.SysRole) (err error) {
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	sysRoleDeptDao := sysdao.NewSysRoleDeptDao(ctx)
+	// todo Transactional
+	// 修改角色信息
+	err = sysRoleDao.UpdateById(sysRole)
+	// 删除角色与部门关联
+	err = sysRoleDeptDao.DeleteRoleDeptByRoleId(sysRole.RoleID)
+	// 新增角色和部门信息（数据权限）
+	err = insertRoleDept(ctx, sysRole)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (*SysRoleService) UpdateRoleStatus(ctx context.Context, sysRole *system.SysRole) error {
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	err := sysRoleDao.UpdateById(sysRole)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func checkRoleNameUnique(ctx context.Context, sysRole *system.SysRole) bool {
 	sysRoleDao := sysdao.NewSysRoleDao(ctx)
-	r, e := sysRoleDao.CheckRoleNameUnique(sysRole.RoleName)
-	if e != nil {
-		global.Logger.Error(e)
-		return false
+	data, err := sysRoleDao.CheckRoleNameUnique(sysRole.RoleName)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false
+		}
+		return true
 	}
-	return r > 0
+	if data.RoleID != 0 && data.RoleID != sysRole.RoleID {
+		return true
+	}
+	return false
 }
 
 func checkRoleKeyUnique(ctx context.Context, sysRole *system.SysRole) bool {
 	sysRoleDao := sysdao.NewSysRoleDao(ctx)
-	r, e := sysRoleDao.CheckRoleKeyUnique(sysRole.RoleName)
-	if e != nil {
-		global.Logger.Error(e)
-		return false
+	data, err := sysRoleDao.CheckRoleKeyUnique(sysRole.RoleKey)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false
+		}
+		return true
 	}
-	return r > 0
+	if data.RoleID != 0 && data.RoleID != sysRole.RoleID {
+		return true
+	}
+	return false
+}
+
+func insertRoleMenu(ctx context.Context, sysRole *system.SysRole) error {
+	sysRoleMenuDao := sysdao.NewSysRoleMenuDao(ctx)
+	var sysRoleMenuList []*system.SysRoleMenu
+	for _, menuId := range sysRole.MenuIds {
+		sysRoleMenu := &system.SysRoleMenu{
+			RoleID: sysRole.RoleID,
+			MenuID: menuId,
+		}
+		sysRoleMenuList = append(sysRoleMenuList, sysRoleMenu)
+	}
+	if len(sysRoleMenuList) > 0 {
+		err := sysRoleMenuDao.BatchRoleMenu(sysRoleMenuList)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func insertRoleDept(ctx context.Context, sysRole *system.SysRole) error {
+	sysRoleDeptDao := sysdao.NewSysRoleDeptDao(ctx)
+	var sysRoleDeptList []*system.SysRoleDept
+	for _, deptId := range sysRole.DeptIds {
+		sysRoleDept := &system.SysRoleDept{
+			RoleID: sysRole.RoleID,
+			DeptID: deptId,
+		}
+		sysRoleDeptList = append(sysRoleDeptList, sysRoleDept)
+	}
+	if len(sysRoleDeptList) > 0 {
+		err := sysRoleDeptDao.BatchRoleDept(sysRoleDeptList)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

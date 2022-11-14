@@ -307,9 +307,9 @@ const data = reactive({
 
 const { dialog, queryParams, form, rules } = toRefs(data)
 
-const deptTreeRef = ref(ElTree) // 部门树
-const queryFormRef = ref(ElForm) // 查询表单
-const userFormRef = ref(ElForm) // 用户表单
+const deptTreeRef = ref<ElTree>(null) // 部门树
+const queryFormRef = ref<ElForm>(null) // 查询表单
+const userFormRef = ref<ElForm>(null) // 用户表单
 
 /** 通过条件过滤节点  */
 const filterNode = (value: string, data:any) => {
@@ -466,9 +466,9 @@ function submitFileForm() {
 }
 /** 关闭用户弹窗 */
 function closeDialog() {
-  dialog.value.visible =  false;
-  userFormRef.value.resetFields();
-  userFormRef.value.clearValidate();
+  dialog.value.visible =  false
+  userFormRef.value?.resetFields()
+  userFormRef.value?.clearValidate()
 }
 /** 新增按钮操作 */
 function handleAdd() {

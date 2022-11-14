@@ -3,6 +3,7 @@ package sysdao
 import (
 	"context"
 	"go-vea/app/model/system"
+	"go-vea/app/model/system/request"
 	"go-vea/configs"
 	"gorm.io/gorm"
 )
@@ -34,4 +35,16 @@ func (dao *SysUserRoleDao) DeleteUserRoleByUserId(userId int64) error {
 
 func (dao *SysUserRoleDao) DeleteUserRole(ids []int64) error {
 	return dao.DB.Where("user_id in (?)", ids).Delete(&system.SysUserRole{}).Error
+}
+
+func (dao *SysUserRoleDao) DeleteUserRoleInfo(ur *system.SysUserRole) error {
+	return dao.DB.Where("user_id = ? and role_id = ? ", ur.UserID, ur.RoleID).Delete(&system.SysUserRole{}).Error
+}
+
+func (dao *SysUserRoleDao) BatchDeleteAuthUser(ur *request.SysUserRole) error {
+	return dao.DB.Where("role_id = ? and user_id in (?)", ur.RoleID, ur.UserIds).Delete(&system.SysUserRole{}).Error
+}
+
+func (dao *SysUserRoleDao) BatchInsertAuthUser(urList []*system.SysUserRole) error {
+	return dao.DB.Create(&urList).Error
 }

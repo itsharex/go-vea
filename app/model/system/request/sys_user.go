@@ -12,6 +12,7 @@ type SysUser struct {
 	Ids         []int64   `json:"ids"`                      // userIds
 	UserID      int64     `json:"userId" form:"userId"`     // 用户ID
 	DeptID      int64     `json:"deptId" form:"deptId"`     // 部门ID
+	RoleID      string    `json:"roleId"`                   // 角色id
 	Username    string    `json:"userName" form:"username"` // 用户账号
 	Nickname    string    `json:"nickname"`                 // 用户昵称
 	UserType    string    `json:"userType"`                 // 用户类型（00系统用户）

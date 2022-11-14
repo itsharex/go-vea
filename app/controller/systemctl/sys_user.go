@@ -29,13 +29,13 @@ func (*SysUserApi) GetSysUserList(ctx *gin.Context) {
 func (*SysUserApi) GetSysUser(ctx *gin.Context) {
 	userId, _ := strconv.Atoi(ctx.Param("userId"))
 	userInfo := &response.UserInfoById{}
-	if !syssrv.SysUserSrv.CheckUserDataScope(ctx, int64(userId)) {
+	if !framework.CheckSrv.CheckUserDataScope(ctx, int64(userId)) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}
 	var roles []*system.SysRole
 	var roleIds []int64
-	tmp, err := syssrv.SysRoleSrv.SelectRollAll(ctx)
+	tmp, err := syssrv.SysRoleSrv.SelectRoleAll(ctx)
 	for _, role := range tmp {
 		if !role.IsAdmin(role.RoleID) {
 			roles = append(roles, role)
@@ -90,11 +90,11 @@ func (*SysUserApi) UpdateSysUser(ctx *gin.Context) {
 	var params request.AddSysUser
 	_ = ctx.ShouldBindJSON(&params)
 	sysUser := params.SysUser
-	if !syssrv.SysUserSrv.CheckUserAllowed(ctx, sysUser) {
+	if !framework.CheckSrv.CheckUserAllowed(ctx, sysUser) {
 		result.FailWithMessage("不允许操作超级管理员用户", ctx)
 		return
 	}
-	if !syssrv.SysUserSrv.CheckUserDataScope(ctx, sysUser.UserID) {
+	if !framework.CheckSrv.CheckUserDataScope(ctx, sysUser.UserID) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}
@@ -142,11 +142,11 @@ func (*SysUserApi) DeleteSysUser(ctx *gin.Context) {
 func (*SysUserApi) ResetPwd(ctx *gin.Context) {
 	var params system.SysUser
 	_ = ctx.ShouldBindJSON(&params)
-	if !syssrv.SysUserSrv.CheckUserAllowed(ctx, &params) {
+	if !framework.CheckSrv.CheckUserAllowed(ctx, &params) {
 		result.FailWithMessage("不允许操作超级管理员用户", ctx)
 		return
 	}
-	if !syssrv.SysUserSrv.CheckUserDataScope(ctx, params.UserID) {
+	if !framework.CheckSrv.CheckUserDataScope(ctx, params.UserID) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}
@@ -164,11 +164,11 @@ func (*SysUserApi) ResetPwd(ctx *gin.Context) {
 func (*SysUserApi) ChangeStatus(ctx *gin.Context) {
 	var params system.SysUser
 	_ = ctx.ShouldBindJSON(&params)
-	if !syssrv.SysUserSrv.CheckUserAllowed(ctx, &params) {
+	if !framework.CheckSrv.CheckUserAllowed(ctx, &params) {
 		result.FailWithMessage("不允许操作超级管理员用户", ctx)
 		return
 	}
-	if !syssrv.SysUserSrv.CheckUserDataScope(ctx, params.UserID) {
+	if !framework.CheckSrv.CheckUserDataScope(ctx, params.UserID) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}
@@ -211,7 +211,7 @@ func (*SysUserApi) AuthRole(ctx *gin.Context) {
 func (*SysUserApi) InsertAuthRole(ctx *gin.Context) {
 	var params request.AddUserRole
 	_ = ctx.ShouldBindJSON(&params)
-	if !syssrv.SysUserSrv.CheckUserDataScope(ctx, params.UserId) {
+	if !framework.CheckSrv.CheckUserDataScope(ctx, params.UserId) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}

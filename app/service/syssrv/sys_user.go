@@ -222,28 +222,72 @@ func (*SysUserService) CheckEmailUnique(ctx context.Context, sysUser *system.Sys
 	return true
 }
 
-func (*SysUserService) CheckUserAllowed(ctx *gin.Context, sysUser *system.SysUser) bool {
-	//loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
-	//if sysUser != nil && loginUser.SysUserResp.SysUser.IsAdmin(sysUser.UserID) {
-	//	global.Logger.Error("不允许操作超级管理员用户")
-	//	return false
-	//}
-	return true
+func (*SysUserService) SelectAllocatedList(ctx context.Context, sysUser *request.SysUser) (page *page.Pagination, err error) {
+	sysUserDao := sysdao.NewSysUserDao(ctx)
+	data, err := sysUserDao.SelectAllocatedList(sysUser)
+	if err != nil {
+		global.Logger.Error(err)
+		return data, err
+	}
+	return data, err
 }
 
-func (s *SysUserService) CheckUserDataScope(ctx *gin.Context, userId int64) bool {
-	//loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
-	//if !loginUser.SysUserResp.SysUser.IsAdmin(userId) {
-	//	params := &request.SysUser{
-	//		UserID: userId,
-	//	}
-	//	data, _ := s.GetSysUserList(ctx, params)
-	//	if data.Rows == nil {
-	//		global.Logger.Error("没有权限访问用户数据")
-	//		return false
-	//	}
-	//}
-	return true
+func (*SysUserService) SelectUnallocatedList(ctx context.Context, sysUser *request.SysUser) (page *page.Pagination, err error) {
+	sysUserDao := sysdao.NewSysUserDao(ctx)
+	data, err := sysUserDao.SelectUnallocatedList(sysUser)
+	if err != nil {
+		global.Logger.Error(err)
+		return data, err
+	}
+	return data, err
+}
+
+func (*SysUserService) DeleteAuthUser(ctx context.Context, ur *system.SysUserRole) error {
+	sysUserRoleDao := sysdao.NewSysUserRoleDao(ctx)
+	err := sysUserRoleDao.DeleteUserRoleInfo(ur)
+	if err != nil {
+		global.Logger.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (*SysUserService) BatchDeleteAuthUser(ctx context.Context, ur *request.SysUserRole) error {
+	sysUserRoleDao := sysdao.NewSysUserRoleDao(ctx)
+	err := sysUserRoleDao.BatchDeleteAuthUser(ur)
+	if err != nil {
+		global.Logger.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (*SysUserService) BatchAddAuthUser(ctx context.Context, ur *request.SysUserRole) error {
+	sysUserRoleDao := sysdao.NewSysUserRoleDao(ctx)
+	var urList []*system.SysUserRole
+	for _, userId := range ur.UserIds {
+		sysUserRole := &system.SysUserRole{
+			RoleID: ur.RoleID,
+			UserID: userId,
+		}
+		urList = append(urList, sysUserRole)
+	}
+	err := sysUserRoleDao.BatchInsertAuthUser(urList)
+	if err != nil {
+		global.Logger.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (*SysUserService) SelectUserByUsername(ctx *gin.Context, username string) (sysUser *system.SysUser, err error) {
+	sysUserDao := sysdao.NewSysUserDao(ctx)
+	data, err := sysUserDao.SelectUserByUsername(username)
+	if err != nil {
+		global.Logger.Error(err)
+		return data, err
+	}
+	return data, err
 }
 
 func addUserRole(ctx context.Context, params *request.AddSysUser) error {

@@ -3,6 +3,7 @@ package syssrv
 import (
 	"context"
 	"errors"
+	"github.com/gin-gonic/gin"
 	"go-vea/app/common/page"
 	"go-vea/app/dao/sysdao"
 	"go-vea/app/model/system"
@@ -72,13 +73,24 @@ func (*SysDeptService) GetDeptTreeList(ctx context.Context, sysDept *request.Sys
 		return nil, err
 	}
 	// 类型转换
-	depts, ok := data.Rows.([]*system.SysDept)
+	deptList, ok := data.Rows.([]*system.SysDept)
 	if !ok {
 		global.Logger.Error("类型转换错误")
 		return nil, errors.New("类型转换错误")
 	}
-	treeList := buildDeptTree(depts)
+	treeList := buildDeptTree(deptList)
 	return treeList, err
+}
+
+func (*SysDeptService) SelectDeptListByRoleId(ctx *gin.Context, roleId int64) (deptIds []int64, err error) {
+	sysDeptDao := sysdao.NewSysDeptDao(ctx)
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	sysRole, err := sysRoleDao.SelectById(roleId)
+	deptIds, err = sysDeptDao.SelectDeptListByRoleId(roleId, sysRole.IsDeptCheckStrictly(sysRole.DeptCheckStrictly))
+	if err != nil {
+		return nil, err
+	}
+	return deptIds, nil
 }
 
 func buildDeptTree(depts []*system.SysDept) []*system.SysDept {

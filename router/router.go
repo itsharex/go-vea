@@ -75,7 +75,7 @@ func InitRouter() {
 		menuRoutes.POST("/list", menuApi.GetMenuList)
 		menuRoutes.POST("/listTreeByPage", menuApi.GetMenuTreeByPage)
 		menuRoutes.GET("/:menuId", menuApi.GetMenuInfo)
-		menuRoutes.GET("/treeSelect", menuApi.TreeSelect)
+		menuRoutes.POST("/treeSelect", menuApi.TreeSelect)
 		menuRoutes.POST("/roleMenuTreeSelect", menuApi.RoleMenuTreeSelect)
 	}
 
@@ -88,6 +88,15 @@ func InitRouter() {
 		roleRoutes.POST("", roleApi.AddSysRole)
 		roleRoutes.PUT("", roleApi.UpdateSysRole)
 		roleRoutes.DELETE("", roleApi.DeleteSysRole)
+		roleRoutes.PUT("dataScope", roleApi.DataScope)
+		roleRoutes.PUT("changeStatus", roleApi.ChangeStatus)
+		roleRoutes.GET("optionSelect", roleApi.OptionSelect)
+		roleRoutes.POST("/authUser/allocatedList", roleApi.AllocatedList)
+		roleRoutes.POST("/authUser/unallocatedList", roleApi.UnallocatedList)
+		roleRoutes.PUT("/authUser/cancel", roleApi.CancelAuthUser)
+		roleRoutes.PUT("/authUser/cancelAll", roleApi.CancelAuthUserAll)
+		roleRoutes.PUT("/authUser/selectAll", roleApi.SelectAuthUserAll)
+		roleRoutes.GET("/deptTree/:roleId", roleApi.DeptTree)
 	}
 
 	// 用户管理

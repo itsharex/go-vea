@@ -30,8 +30,8 @@ export function parseTime(time: any, pattern: string) {
     s: date.getSeconds(),
     a: date.getDay()
   }
-  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
-    let value = formatObj[key]
+  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result:string, key:string) => {
+    let value = (formatObj as any)[key]
     // Note: getDay() returns 0 on Sunday
     if (key === 'a') {
       return ['日', '一', '二', '三', '四', '五', '六'][value]

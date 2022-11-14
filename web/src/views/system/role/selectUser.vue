@@ -9,12 +9,16 @@
         <el-input v-model="queryParams.phoneNumber" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" @click="handleQuery">
+          <ep:search /> 搜索
+        </el-button>
+        <el-button @click="resetQuery">
+          <ep:refresh /> 重置
+        </el-button>
       </el-form-item>
     </el-form>
     <el-row>
-      <el-table @row-click="clickRow" ref="refTable" :data="userList" @selection-change="handleSelectionChange" height="260px">
+      <el-table @row-click="clickRow" ref="userTableRef" :data="userList" @selection-change="handleSelectionChange" height="260px">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="用户名称" prop="username" :show-overflow-tooltip="true" />
         <el-table-column label="用户昵称" prop="nickname" :show-overflow-tooltip="true" />
@@ -42,8 +46,9 @@
   </el-dialog>
 </template>
 
-<script setup name="SelectUser">
+<script lang="ts" setup name="SelectUser">
 import { authUserSelectAll, unallocatedUserList } from '@/api/system/role'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
 
 const props = defineProps({
   roleId: {
@@ -51,13 +56,15 @@ const props = defineProps({
   }
 })
 
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
 const userList = ref([])
 const visible = ref(false)
 const total = ref(0)
 const userIds = ref([])
+
+const userTableRef = ref<ElTable>(null)
 
 const queryParams = reactive({
   pageNum: 1,
@@ -74,18 +81,18 @@ function show() {
   visible.value = true
 }
 /**选择行 */
-function clickRow(row) {
-  proxy.$refs['refTable'].toggleRowSelection(row)
+function clickRow(row: { [key: string]: any }) {
+  userTableRef.value.toggleRowSelection(row)
 }
 // 多选框选中数据
-function handleSelectionChange(selection) {
-  userIds.value = selection.map(item => item.userId)
+function handleSelectionChange(selection:any) {
+  userIds.value = selection.map((item:any) => item.userId)
 }
 // 查询表数据
 function getList() {
   unallocatedUserList(queryParams).then(res => {
-    userList.value = res.rows
-    total.value = res.total
+    userList.value = res.data.rows
+    total.value = res.data.total
   })
 }
 /** 搜索按钮操作 */
@@ -101,13 +108,12 @@ function resetQuery() {
 const emit = defineEmits(['ok'])
 /** 选择授权用户操作 */
 function handleSelectUser() {
-  const roleId = queryParams.roleId
   const uIds = userIds.value.join(',')
   if (uIds == '') {
     proxy.$modal.msgError('请选择要分配的用户')
     return
   }
-  authUserSelectAll({ roleId: roleId, userIds: uIds }).then(res => {
+  authUserSelectAll({ roleId: Number(queryParams.roleId), userIds: userIds.value }).then(res => {
     proxy.$modal.msgSuccess(res.msg)
     if (res.code === 200) {
       visible.value = false

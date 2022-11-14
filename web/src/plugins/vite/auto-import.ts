@@ -31,7 +31,7 @@ export default function createAutoImport() {
     ],
     // eslint报错解决
     eslintrc: {
-      enabled: false, // Default `false` 生成一次就可以，避免每次工程启动都生成
+      enabled: true, // Default `false` 生成一次就可以，避免每次工程启动都生成
       filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
       globalsPropValue: true // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
     },

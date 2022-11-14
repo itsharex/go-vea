@@ -49,7 +49,7 @@ func recordLoginInfo(userId int64) {
 
 func loadUserByUsername(ctx *gin.Context, loginBody *request.LoginBody) (*response.LoginUser, error) {
 	userDao := sysdao.NewSysUserDao(ctx)
-	sysUser, err := userDao.SelectUserByUserName(loginBody.Username)
+	sysUser, err := userDao.SelectUserByUsername(loginBody.Username)
 	if err != nil {
 		global.Logger.Error(err)
 		return nil, err

@@ -173,24 +173,15 @@ func (dao *SysMenuDao) SelectMenuTreeByUserId(userId int64) (menus []*system.Sys
 	return
 }
 
-// SelectMenuListByRoleId 根据角色ID查询菜单树信息
+// SelectMenuListByRoleId 根据角色ID查询菜单树信息 选中菜单列表
 func (dao *SysMenuDao) SelectMenuListByRoleId(param *request.MenuListByRoleId) (list []int64, err error) {
-	// 		select m.menu_id
-	//		from sys_menu m
-	//            left join sys_role_menu rm on m.menu_id = rm.menu_id
-	//        where rm.role_id = #{roleId}
-	//            <if test="menuCheckStrictly">
-	//              and m.menu_id not in (select m.parent_id from sys_menu m inner join sys_role_menu rm on m.menu_id = rm.menu_id and rm.role_id = #{roleId})
-	//            </if>
-	//		order by m.parent_id, m.order_num
-	dao.DB = dao.DB.Table("sys_menu m").Distinct("m.perms").Select("m.perms").
-		Joins("left join sys_role_menu rm on m.menu_id = rm.menu_id")
-
+	dao.DB = dao.DB.Table("sys_menu m").Distinct("m.menu_id").
+		Joins("left join sys_role_menu rm on m.menu_id = rm.menu_id").
+		Where("rm.role_id = ?", param.RoleId)
 	if param.IsMenuCheckStrictly {
 		dao.DB = dao.DB.Where("m.menu_id not in (select m.parent_id from sys_menu m inner join sys_role_menu rm on m.menu_id = rm.menu_id and rm.role_id = ?)", param.RoleId)
 	}
-
-	err = dao.DB.Where("m.status = '0' and rm.role_id = ?", param.RoleId).Find(&list).Error
+	err = dao.DB.Debug().Find(&list).Error
 	return list, err
 }
 

@@ -8,22 +8,26 @@
         <el-input v-model="queryParams.phoneNumber" placeholder="请输入手机号码" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" @click="handleQuery"><ep:search /> 搜索</el-button>
+        <el-button @click="resetQuery"><ep:refresh /> 重置</el-button>
       </el-form-item>
     </el-form>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="openSelectUser" v-hasPerms="['system:role:add']">添加用户</el-button>
+        <el-button type="primary" plain @click="openSelectUser" v-hasPerms="['system:role:add']">
+          <ep:plus />添加用户
+        </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="CircleClose" :disabled="multiple" @click="cancelAuthUserAll" v-hasPerms="['system:role:remove']"
-          >批量取消授权</el-button
-        >
+        <el-button type="danger" plain :disabled="multiple" @click="cancelAuthUserAll" v-hasPerms="['system:role:remove']">
+          <ep:circleClose /> 批量取消授权
+        </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Close" @click="handleClose">关闭</el-button>
+        <el-button type="warning" plain @click="handleClose">
+          <ep:close /> 关闭
+        </el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -46,7 +50,9 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button type="text" icon="CircleClose" @click="cancelAuthUser(scope.row)" v-hasPerms="['system:role:remove']">取消授权</el-button>
+          <el-button link @click="cancelAuthUser(scope.row)" v-hasPerms="['system:role:remove']">
+            <ep:circleClose /> 取消授权
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,12 +62,13 @@
   </div>
 </template>
 
-<script setup name="AuthUser">
-import selectUser from './selectUser'
+<script lang="ts" setup name="AuthUser">
+import selectUser from './selectUser.vue'
 import { allocatedUserList, authUserCancel, authUserCancelAll } from '@/api/system/role'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
 
 const route = useRoute()
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
 const userList = ref([])
@@ -70,6 +77,8 @@ const showSearch = ref(true)
 const multiple = ref(true)
 const total = ref(0)
 const userIds = ref([])
+
+const selectRef = ref<any>(null)
 
 const queryParams = reactive({
   pageNum: 1,
@@ -83,8 +92,8 @@ const queryParams = reactive({
 function getList() {
   loading.value = true
   allocatedUserList(queryParams).then(response => {
-    userList.value = response.rows
-    total.value = response.total
+    userList.value = response.data.rows
+    total.value = response.data.total
     loading.value = false
   })
 }
@@ -104,20 +113,20 @@ function resetQuery() {
   handleQuery()
 }
 // 多选框选中数据
-function handleSelectionChange(selection) {
-  userIds.value = selection.map(item => item.userId)
+function handleSelectionChange(selection:any) {
+  userIds.value = selection.map((item:any) => item.userId)
   multiple.value = !selection.length
 }
 /** 打开授权用户表弹窗 */
 function openSelectUser() {
-  proxy.$refs['selectRef'].show()
+  selectRef.value.show()
 }
 /** 取消授权按钮操作 */
-function cancelAuthUser(row) {
+function cancelAuthUser(row: { [key: string]: any }) {
   proxy.$modal
     .confirm('确认要取消该用户"' + row.username + '"角色吗？')
     .then(function () {
-      return authUserCancel({ userId: row.userId, roleId: queryParams.roleId })
+      return authUserCancel({ userId: Number(row.userId), roleId: Number(queryParams.roleId) })
     })
     .then(() => {
       getList()
@@ -126,13 +135,13 @@ function cancelAuthUser(row) {
     .catch(() => {})
 }
 /** 批量取消授权按钮操作 */
-function cancelAuthUserAll(row) {
-  const roleId = queryParams.roleId
-  const uIds = userIds.value.join(',')
+function cancelAuthUserAll() {
+  // const roleId = queryParams.roleId
+  // const uIds = userIds.value.join(',')
   proxy.$modal
     .confirm('是否取消选中用户授权数据项?')
     .then(function () {
-      return authUserCancelAll({ roleId: roleId, userIds: uIds })
+      return authUserCancelAll({ roleId: Number(queryParams.roleId), userIds: userIds.value })
     })
     .then(() => {
       getList()
@@ -141,5 +150,7 @@ function cancelAuthUserAll(row) {
     .catch(() => {})
 }
 
-getList()
+onMounted(() => {
+  getList()
+})
 </script>

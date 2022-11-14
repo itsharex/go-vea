@@ -2,6 +2,7 @@ package response
 
 import (
 	"go-vea/app/common/base"
+	"go-vea/app/model/system"
 	"time"
 )
 
@@ -21,4 +22,9 @@ type SysDept struct {
 	CreateTime time.Time `json:"createTime"` // 创建时间
 	UpdateBy   string    `json:"updateBy"`   // 更新者
 	UpdateTime time.Time `json:"updateTime"` // 更新时间
+}
+
+type DeptTreeByRoleId struct {
+	CheckedKeys []int64           `json:"checkedKeys"`
+	DeptList    []*system.SysDept `json:"deptList"`
 }

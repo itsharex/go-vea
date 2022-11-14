@@ -39,7 +39,7 @@ func (dao *SysDeptDao) SelectList(sysDept *request.SysDept) (p *page.Pagination,
 		dao.DB = dao.DB.Where("status = ?", sysDept.Status)
 	}
 
-	dao.DB.Where("del_flag = '0'")
+	dao.DB.Where("del_flag = '0'").Order("parent_id, order_num")
 
 	if sysDept.OpenPage {
 		p.PageNum = sysDept.PageNum
@@ -95,4 +95,15 @@ func (dao *SysDeptDao) DeleteById(id int64) error {
 
 func (dao *SysDeptDao) DeleteByIds(ids []int64) error {
 	return dao.DB.Where("dept_id in (?)", ids).Delete(&system.SysDept{}).Error
+}
+
+func (dao *SysDeptDao) SelectDeptListByRoleId(roleId int64, deptCheckStrictly bool) (deptIds []int64, err error) {
+	dao.DB = dao.DB.Table("sys_dept d").Select("d.dept_id").
+		Joins("left join sys_role_dept rd on d.dept_id = rd.dept_id").
+		Where("rd.role_id = ?", roleId)
+	if deptCheckStrictly {
+		dao.DB = dao.DB.Where("d.dept_id not in (select d.parent_id from sys_dept d inner join sys_role_dept rd on d.dept_id = rd.dept_id and rd.role_id = ?)", roleId)
+	}
+	err = dao.DB.Order("d.parent_id, d.order_num").Find(&deptIds).Error
+	return deptIds, err
 }

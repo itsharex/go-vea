@@ -27,18 +27,20 @@ export function getMenu(menuId) {
 }
 
 // 查询菜单下拉树结构
-export function treeselect() {
+export function treeSelect(data) {
   return request({
-    url: '/system/menu/treeselect',
-    method: 'get'
+    url: '/system/menu/treeSelect',
+    method: 'post',
+    data: data
   })
 }
 
 // 根据角色ID查询菜单下拉树结构
-export function roleMenuTreeselect(roleId) {
+export function roleMenuTreeselect(data) {
   return request({
-    url: '/system/menu/roleMenuTreeselect/' + roleId,
-    method: 'get'
+    url: '/system/menu/roleMenuTreeSelect',
+    method: 'post',
+    data: data
   })
 }
 
