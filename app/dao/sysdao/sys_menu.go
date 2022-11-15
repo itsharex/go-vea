@@ -80,20 +80,14 @@ func (dao *SysMenuDao) DeleteByIds(ids []int64) error {
 }
 
 // CheckMenuNameUnique 校验菜单名称是否唯一
-func (dao *SysMenuDao) CheckMenuNameUnique(sysMenu *system.SysMenu) (count int64, err error) {
-	err = dao.DB.Model(&system.SysMenu{}).Where("menu_name = ?", sysMenu.MenuName).Where("parent_id = ?", sysMenu.ParentID).Count(&count).Error
-	return
+func (dao *SysMenuDao) CheckMenuNameUnique(m *system.SysMenu) (sysMenu *system.SysMenu, err error) {
+	err = dao.DB.Select("menu_id, menu_name, parent_id").Where("menu_name = ? and parent_id = ?", m.MenuName, m.ParentID).First(&sysMenu).Error
+	return sysMenu, err
 }
 
 // HasChildByMenuId 是否存在菜单子节点
 func (dao *SysMenuDao) HasChildByMenuId(menuId int64) (count int64, err error) {
 	err = dao.DB.Model(&system.SysMenu{}).Where("parent_id = ?", menuId).Count(&count).Error
-	return
-}
-
-// CheckMenuExistRole 查询菜单使用数量
-func (dao *SysMenuDao) CheckMenuExistRole(menuId int64) (count int64, err error) {
-	err = dao.DB.Model(&system.SysMenu{}).Where("menu_id = ?", menuId).Count(&count).Error
 	return
 }
 

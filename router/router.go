@@ -73,7 +73,7 @@ func InitRouter() {
 		menuRoutes.PUT("", menuApi.UpdateSysMenu)
 		menuRoutes.DELETE("/:menuId", menuApi.DeleteSysMenu)
 		menuRoutes.POST("/list", menuApi.GetMenuList)
-		menuRoutes.POST("/listTreeByPage", menuApi.GetMenuTreeByPage)
+		menuRoutes.POST("/listMenuTree", menuApi.GetMenuTreeList)
 		menuRoutes.GET("/:menuId", menuApi.GetMenuInfo)
 		menuRoutes.POST("/treeSelect", menuApi.TreeSelect)
 		menuRoutes.POST("/roleMenuTreeSelect", menuApi.RoleMenuTreeSelect)

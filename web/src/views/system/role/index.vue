@@ -87,7 +87,7 @@
         <el-form-item label="角色顺序" prop="roleSort">
           <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
@@ -122,13 +122,13 @@
     <!-- 分配角色数据权限对话框 -->
     <el-dialog :title="dialog.title" v-model="openDataScope" width="500px" append-to-body>
       <el-form :model="form" label-width="80px">
-        <el-form-item label="角色名称">
+        <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="form.roleName" :disabled="true" />
         </el-form-item>
-        <el-form-item label="权限字符">
+        <el-form-item label="权限字符" prop="roleKey">
           <el-input v-model="form.roleKey" :disabled="true" />
         </el-form-item>
-        <el-form-item label="权限范围">
+        <el-form-item label="权限范围" prop="dataScope">
           <el-select v-model="form.dataScope" @change="dataScopeSelectChange">
             <el-option v-for="item in dataScopeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>

@@ -10,6 +10,7 @@ import (
 	"go-vea/app/model/system/response"
 	"go-vea/global"
 	"go-vea/util"
+	"gorm.io/gorm"
 	"strings"
 )
 
@@ -50,8 +51,8 @@ func (*SysMenuService) SelectSysMenuById(ctx context.Context, menuId int64) (*sy
 
 func (s *SysMenuService) AddSysMenu(ctx context.Context, sysMenu *system.SysMenu) error {
 	sysMenuDao := sysdao.NewSysMenuDao(ctx)
-	r := checkMenuNameUnique(ctx, sysMenu)
-	if r {
+	unique := checkMenuNameUnique(ctx, sysMenu)
+	if !unique {
 		global.Logger.Error("新增失败！菜单名称已存在")
 		return errors.New("新增失败！菜单名称已存在")
 	} else if sysMenu.IsFrame == 0 && !isHttp(sysMenu.Path) {
@@ -68,8 +69,8 @@ func (s *SysMenuService) AddSysMenu(ctx context.Context, sysMenu *system.SysMenu
 
 func (*SysMenuService) UpdateSysMenuById(ctx context.Context, sysMenu *system.SysMenu) error {
 	sysMenuDao := sysdao.NewSysMenuDao(ctx)
-	hasMenuName := checkMenuNameUnique(ctx, sysMenu)
-	if hasMenuName {
+	unique := checkMenuNameUnique(ctx, sysMenu)
+	if !unique {
 		global.Logger.Error("修改失败！菜单名称已存在")
 		return errors.New("修改失败！菜单名称已存在")
 	} else if sysMenu.IsFrame == 0 && !isHttp(sysMenu.Path) {
@@ -199,18 +200,23 @@ func hasChildByMenuId(ctx context.Context, menuId int64) bool {
 // 校验菜单名称是否唯一
 func checkMenuNameUnique(ctx context.Context, menu *system.SysMenu) bool {
 	sysMenuDao := sysdao.NewSysMenuDao(ctx)
-	c, e := sysMenuDao.CheckMenuNameUnique(menu)
-	if e != nil {
-		global.Logger.Error(e)
+	data, err := sysMenuDao.CheckMenuNameUnique(menu)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return true
+		}
 		return false
 	}
-	return c > 0
+	if data.MenuID != 0 && data.MenuID != menu.MenuID {
+		return false
+	}
+	return true
 }
 
 // 查询菜单使用数量
 func checkMenuExistRole(ctx context.Context, menuId int64) bool {
-	sysMenuDao := sysdao.NewSysMenuDao(ctx)
-	c, e := sysMenuDao.CheckMenuExistRole(menuId)
+	sysRoleMenuDao := sysdao.NewSysRoleMenuDao(ctx)
+	c, e := sysRoleMenuDao.CheckMenuExistRole(menuId)
 	if e != nil {
 		global.Logger.Error(e)
 		return false

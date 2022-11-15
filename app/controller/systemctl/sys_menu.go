@@ -25,10 +25,8 @@ func (*SysMenuApi) GetMenuList(ctx *gin.Context) {
 	}
 }
 
-func (*SysMenuApi) GetMenuTreeByPage(ctx *gin.Context) {
+func (*SysMenuApi) GetMenuTreeList(ctx *gin.Context) {
 	var params request.SysMenu
-	// todo 分页？
-	//params.OpenPage = true
 	_ = ctx.ShouldBindJSON(&params)
 	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
 	data, err := syssrv.SysMenuSrv.GetTreeSelect(ctx.Request.Context(), &params, loginUser.UserID)

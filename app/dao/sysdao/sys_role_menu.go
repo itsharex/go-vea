@@ -26,3 +26,8 @@ func (dao *SysRoleMenuDao) DeleteRoleMenuByRoleId(roleId int64) error {
 func (dao *SysRoleMenuDao) BatchRoleMenu(list []*system.SysRoleMenu) error {
 	return dao.DB.Create(&list).Error
 }
+
+func (dao *SysRoleMenuDao) CheckMenuExistRole(menuId int64) (count int64, err error) {
+	err = dao.DB.Model(&system.SysRoleMenu{}).Where("menu_id = ?", menuId).Count(&count).Error
+	return
+}

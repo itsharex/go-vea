@@ -10,9 +10,9 @@ export function listMenu(data) {
 }
 
 // 分页查询菜单列表
-export function listTreeByPage(data) {
+export function listMenuTree(data) {
   return request({
-    url: '/system/menu/listTreeByPage',
+    url: '/system/menu/listMenuTree',
     method: 'post',
     params: data
   })

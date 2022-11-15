@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import icons from './requireIcons'
 
 const iconName = ref('')
@@ -26,7 +26,7 @@ function filterIcons() {
   }
 }
 
-function selectedIcon(name) {
+function selectedIcon(name: string) {
   emit('selected', name)
   document.body.click()
 }
