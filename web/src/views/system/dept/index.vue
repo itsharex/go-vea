@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
+    <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
       <el-form-item label="部门名称" prop="deptName">
         <el-input v-model="queryParams.deptName" placeholder="请输入部门名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -58,12 +58,13 @@
     </el-table>
 
     <!-- 添加或修改部门对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form ref="deptRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" @close="closeDialog" append-to-body>
+      <el-form ref="deptFormRef" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
             <el-form-item label="上级部门" prop="parentId">
               <el-tree-select
+                style="width: 100%"
                 v-model="form.parentId"
                 :data="deptOptions"
                 :props="{ value: 'deptId', label: 'deptName', children: 'children' }"
@@ -80,7 +81,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="显示排序" prop="orderNum">
-              <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
+              <el-input-number style="width: 100%" v-model="form.orderNum" controls-position="right" :min="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -110,7 +111,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button @click="closeDialog">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -119,21 +120,32 @@
 
 <script lang="ts" setup name="Dept">
 import { listDeptTree, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from '@/api/system/dept'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
+import { DeptFormData } from '@/types/api/dept'
+import { Dialog } from '@/types/common'
 
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
 const deptList = ref([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
-const title = ref('')
 const deptOptions = ref([])
 const isExpandAll = ref(true)
 const refreshTable = ref(true)
 
+const queryFormRef = ref<ElForm>(null)
+const deptFormRef = ref<ElForm>(null)
+
 const data = reactive({
-  form: {},
+  dialog: {
+    visible: false,
+    title: ''
+  } as Dialog,
+  form: {
+    orderNum: 0,
+    status: '0'
+  } as DeptFormData,
   queryParams: {
     deptName: undefined,
     status: undefined
@@ -147,7 +159,7 @@ const data = reactive({
   }
 })
 
-const { queryParams, form, rules } = toRefs(data)
+const { dialog, queryParams, form, rules } = toRefs(data)
 
 /** 查询部门列表 */
 function getList() {
@@ -157,24 +169,11 @@ function getList() {
     loading.value = false
   })
 }
-/** 取消按钮 */
-function cancel() {
-  open.value = false
-  reset()
-}
-/** 表单重置 */
-function reset() {
-  form.value = {
-    deptId: undefined,
-    parentId: undefined,
-    deptName: undefined,
-    orderNum: 0,
-    leader: undefined,
-    phone: undefined,
-    email: undefined,
-    status: '0'
-  }
-  proxy.resetForm('deptRef')
+/** 关闭弹窗 */
+function closeDialog() {
+  dialog.value.visible =  false
+  deptFormRef.value?.resetFields()
+  deptFormRef.value?.clearValidate()
 }
 /** 搜索按钮操作 */
 function handleQuery() {
@@ -182,20 +181,19 @@ function handleQuery() {
 }
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm('queryRef')
+  queryFormRef.value?.resetFields()
   handleQuery()
 }
 /** 新增按钮操作 */
-function handleAdd(row) {
-  reset()
-  listDept().then(response => {
-    deptOptions.value = proxy.handleTree(response.data, 'deptId')
+function handleAdd(row: { [key: string]: any }) {
+  listDeptTree(queryParams.value).then(response => {
+    deptOptions.value = response.data
   })
   if (row != undefined) {
     form.value.parentId = row.deptId
   }
-  open.value = true
-  title.value = '添加部门'
+  dialog.value.visible = true
+  dialog.value.title = '添加部门'
 }
 /** 展开/折叠操作 */
 function toggleExpandAll() {
@@ -206,31 +204,30 @@ function toggleExpandAll() {
   })
 }
 /** 修改按钮操作 */
-function handleUpdate(row) {
-  reset()
-  listDeptExcludeChild(row.deptId).then(response => {
-    deptOptions.value = proxy.handleTree(response.data, 'deptId')
+function handleUpdate(row: { [key: string]: any }) {
+  listDeptExcludeChild({ExcludeDeptId: row.deptId}).then(response => {
+    deptOptions.value = response.data
   })
   getDept(row.deptId).then(response => {
     form.value = response.data
-    open.value = true
-    title.value = '修改部门'
+    dialog.value.visible = true
+    dialog.value.title = '修改部门'
   })
 }
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs['deptRef'].validate(valid => {
+  deptFormRef.value.validate((valid:any) => {
     if (valid) {
       if (form.value.deptId != undefined) {
-        updateDept(form.value).then(response => {
+        updateDept(form.value).then(() => {
           proxy.$modal.msgSuccess('修改成功')
-          open.value = false
+          closeDialog()
           getList()
         })
       } else {
-        addDept(form.value).then(response => {
+        addDept(form.value).then(() => {
           proxy.$modal.msgSuccess('新增成功')
-          open.value = false
+          closeDialog()
           getList()
         })
       }
@@ -238,7 +235,7 @@ function submitForm() {
   })
 }
 /** 删除按钮操作 */
-function handleDelete(row) {
+function handleDelete(row: { [key: string]: any }) {
   proxy.$modal
     .confirm('是否确认删除名称为"' + row.deptName + '"的数据项?')
     .then(function () {
@@ -251,5 +248,7 @@ function handleDelete(row) {
     .catch(() => {})
 }
 
-getList()
+onMounted(() =>{
+  getList()
+})
 </script>

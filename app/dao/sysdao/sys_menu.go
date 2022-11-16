@@ -175,7 +175,7 @@ func (dao *SysMenuDao) SelectMenuListByRoleId(param *request.MenuListByRoleId) (
 	if param.IsMenuCheckStrictly {
 		dao.DB = dao.DB.Where("m.menu_id not in (select m.parent_id from sys_menu m inner join sys_role_menu rm on m.menu_id = rm.menu_id and rm.role_id = ?)", param.RoleId)
 	}
-	err = dao.DB.Debug().Find(&list).Error
+	err = dao.DB.Find(&list).Error
 	return list, err
 }
 

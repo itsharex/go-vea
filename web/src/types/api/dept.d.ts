@@ -1,3 +1,10 @@
 export type DeptFormData = {
-  deptId: string
+  deptId: string | number
+  parentId: number
+  deptName: string
+  leader: string
+  phone: string
+  email: string
+  orderNum: number
+  status: string
 }

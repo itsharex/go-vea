@@ -17,3 +17,15 @@ func FirstLower(s string) string {
 	}
 	return strings.ToLower(s[:1]) + s[1:]
 }
+
+func Contains(arrStr string, str string) bool {
+	arr := strings.Split(arrStr, ",")
+	b := false
+	for _, s := range arr {
+		if s == str {
+			b = true
+			break
+		}
+	}
+	return b
+}

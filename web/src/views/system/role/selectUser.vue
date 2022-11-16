@@ -1,7 +1,7 @@
 <template>
   <!-- 授权用户 -->
   <el-dialog title="选择用户" v-model="visible" width="800px" top="5vh" append-to-body>
-    <el-form :model="queryParams" ref="queryRef" :inline="true">
+    <el-form :model="queryParams" ref="queryFormRef" :inline="true">
       <el-form-item label="用户名称" prop="username">
         <el-input v-model="queryParams.username" placeholder="请输入用户名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -64,6 +64,7 @@ const visible = ref(false)
 const total = ref(0)
 const userIds = ref([])
 
+const queryFormRef = ref<ElForm>(null)
 const userTableRef = ref<ElTable>(null)
 
 const queryParams = reactive({
@@ -102,7 +103,7 @@ function handleQuery() {
 }
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm('queryRef')
+  queryFormRef.value?.resetFields()
   handleQuery()
 }
 const emit = defineEmits(['ok'])

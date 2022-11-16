@@ -139,9 +139,10 @@ func InitRouter() {
 		deptRoutes.POST("/list", deptApi.GetSysDeptList)
 		deptRoutes.POST("/tree", deptApi.GetSysDeptTreeList)
 		deptRoutes.GET("/:deptId", deptApi.GetSysDept)
+		deptRoutes.DELETE("/:deptId", deptApi.DeleteSysDept)
+		deptRoutes.POST("/list/exclude", deptApi.ExcludeChild)
 		deptRoutes.POST("", deptApi.AddSysDept)
 		deptRoutes.PUT("", deptApi.UpdateSysDept)
-		deptRoutes.DELETE("", deptApi.DeleteSysDept)
 	}
 
 	// 岗位管理

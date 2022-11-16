@@ -21,7 +21,7 @@
       v-loading="loading"
       :row-key="getRowKey"
       @row-click="clickRow"
-      ref="roleRef"
+      ref="roleTableRef"
       @selection-change="handleSelectionChange"
       :data="roles.slice((pageNum - 1) * pageSize, pageNum * pageSize)"
     >
@@ -58,7 +58,7 @@ import useCurrentInstance from '@/hooks/useCurrentInstance'
 
 const route = useRoute()
 const { proxy } = useCurrentInstance()
-const roleRef = ref<InstanceType<typeof ElTable>>();
+const roleTableRef = ref<InstanceType<typeof ElTable>>();
 
 const loading = ref(true)
 const total = ref(0)
@@ -73,15 +73,15 @@ const form = ref({
 })
 
 /** 单击选中行数据 */
-function clickRow(row) {
-  roleRef.value.toggleRowSelection(row)
+function clickRow(row: { [key: string]: any }) {
+  roleTableRef.value.toggleRowSelection(row)
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  roleIds.value = selection.map(item => item.roleId)
+function handleSelectionChange(selection:any) {
+  roleIds.value = selection.map((item:any) => item.roleId)
 }
 /** 保存选中的数据编号 */
-function getRowKey(row) {
+function getRowKey(row: { [key: string]: any }) {
   return row.roleId
 }
 /** 关闭按钮 */
@@ -96,7 +96,7 @@ function submitForm() {
     userId: userId,
     roleIds: roleIds.value
   }
-  updateAuthRole(data).then(response => {
+  updateAuthRole(data).then(() => {
     proxy.$modal.msgSuccess('授权成功')
     close()
   })
@@ -113,7 +113,7 @@ onMounted(() => {
       nextTick(() => {
         roles.value.forEach(row => {
           if (row.flag) {
-            roleRef.value.toggleRowSelection(row)
+            roleTableRef.value.toggleRowSelection(row)
           }
         })
       })

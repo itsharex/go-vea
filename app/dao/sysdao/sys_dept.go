@@ -107,3 +107,25 @@ func (dao *SysDeptDao) SelectDeptListByRoleId(roleId int64, deptCheckStrictly bo
 	err = dao.DB.Order("d.parent_id, d.order_num").Find(&deptIds).Error
 	return deptIds, err
 }
+
+func (dao *SysDeptDao) CheckDeptNameUnique(dept *system.SysDept) (sysDept *system.SysDept, err error) {
+	err = dao.DB.Select("dept_id, dept_name").
+		Where("dept_name = ? and parent_id = ?", dept.DeptName, dept.ParentID).
+		Where("del_flag = '0'").First(&sysDept).Error
+	return sysDept, err
+}
+
+func (dao *SysDeptDao) HasChildByDeptId(deptId int64) (count int64, err error) {
+	err = dao.DB.Where("parent_id = ? and del_flag = '0'", deptId).Count(&count).Error
+	return
+}
+
+func (dao *SysDeptDao) CheckDeptExistUser(deptId int64) (count int64, err error) {
+	err = dao.DB.Model(&system.SysUser{}).Where("dept_id = ? and del_flag = '0'", deptId).Count(&count).Error
+	return
+}
+
+func (dao *SysDeptDao) SelectNormalChildrenDeptById(deptId int64) (count int64, err error) {
+	err = dao.DB.Where("status = 0 and del_flag = '0'").Where("find_in_set(?, ancestors)", deptId).Count(&count).Error
+	return
+}

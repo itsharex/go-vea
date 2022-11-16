@@ -17,7 +17,7 @@ export type MenuFormData = {
 }
 
 export type MenuOptions = {
-  menuId: number,
-  menuName: string,
+  menuId: number
+  menuName: string
   children: any[]
 }

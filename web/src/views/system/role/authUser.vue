@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" v-show="showSearch" :inline="true">
+    <el-form :model="queryParams" ref="queryFormRef" v-show="showSearch" :inline="true">
       <el-form-item label="用户名称" prop="username">
         <el-input v-model="queryParams.username" placeholder="请输入用户名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
@@ -79,6 +79,7 @@ const total = ref(0)
 const userIds = ref([])
 
 const selectRef = ref<any>(null)
+const queryFormRef = ref<ElForm>(null)
 
 const queryParams = reactive({
   pageNum: 1,
@@ -109,7 +110,7 @@ function handleQuery() {
 }
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm('queryRef')
+  queryFormRef.value?.resetFields()
   handleQuery()
 }
 // 多选框选中数据

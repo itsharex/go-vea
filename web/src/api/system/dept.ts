@@ -21,10 +21,11 @@ export function listDeptTree(data) {
 }
 
 // 查询部门列表（排除节点）
-export function listDeptExcludeChild(deptId) {
+export function listDeptExcludeChild(data) {
   return request({
-    url: '/system/dept/list/exclude/' + deptId,
-    method: 'get'
+    url: '/system/dept/list/exclude',
+    method: 'post',
+    data: data
   })
 }
 

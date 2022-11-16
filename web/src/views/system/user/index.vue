@@ -348,7 +348,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
-  queryFormRef.value.resetFields()
+  queryFormRef.value?.resetFields()
   queryParams.value.deptId = undefined
   deptTreeRef.value.setCurrentKey(null)
   handleQuery()

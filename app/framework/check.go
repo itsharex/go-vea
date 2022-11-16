@@ -61,3 +61,19 @@ func (*CheckService) CheckUserDataScope(ctx *gin.Context, userId int64) bool {
 	}
 	return true
 }
+
+// CheckDeptDataScope 校验部门是否有数据权限
+func (*CheckService) CheckDeptDataScope(ctx *gin.Context, deptId int64) bool {
+	loginUser, _ := TokenSrv.GetLoginUser(ctx)
+	if !loginUser.SysUserResp.SysUser.IsAdmin(loginUser.UserID) {
+		params := &request.SysDept{
+			DeptID: deptId,
+		}
+		data, _ := syssrv.SysDeptSrv.GetSysDeptList(ctx, params)
+		if data.Rows == nil {
+			global.Logger.Error("没有权限访问部门数据")
+			return false
+		}
+	}
+	return true
+}
