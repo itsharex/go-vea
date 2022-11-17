@@ -484,14 +484,16 @@ function handleAdd() {
 function handleUpdate(row: { [key: string]: any }) {
   const userId = row.userId || ids.value
   getUser(userId).then(response => {
-    form.value = response.data.user
-    postOptions.value = response.data.posts
-    roleOptions.value = response.data.roles
-    form.value.postIds = response.data.postIds
-    form.value.roleIds = response.data.roleIds
     dialog.value.visible = true
     dialog.value.title = '修改用户'
-    form.value.password = ''
+    nextTick(() => {
+      form.value = response.data.user
+      postOptions.value = response.data.posts
+      roleOptions.value = response.data.roles
+      form.value.postIds = response.data.postIds
+      form.value.roleIds = response.data.roleIds
+      form.value.password = ''
+    })
   })
 }
 /** 提交按钮 */

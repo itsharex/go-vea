@@ -359,9 +359,11 @@ function toggleExpandAll() {
 async function handleUpdate(row: { [key: string]: any }) {
   getTreeSelect()
   getMenu(row.menuId).then(response => {
-    form.value = response.data
     dialog.value.visible = true
     dialog.value.title = '修改菜单'
+    nextTick(() => {
+      form.value = response.data
+    })
   })
 }
 /** 提交按钮 */

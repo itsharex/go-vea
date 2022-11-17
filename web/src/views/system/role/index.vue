@@ -87,7 +87,7 @@
         <el-form-item label="角色顺序" prop="roleSort">
           <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
+        <el-form-item label="状态">
           <el-radio-group v-model="form.status">
             <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
@@ -344,10 +344,11 @@ function handleUpdate(row: { [key: string]: any }) {
   const roleId = row.roleId || ids.value
   const roleMenu = getRoleMenuTreeselect(roleId)
   getRole(roleId).then(response => {
-    form.value = response.data
-    form.value.roleSort = Number(form.value.roleSort)
     dialog.value.visible = true
+    dialog.value.title = '修改角色'
     nextTick(() => {
+      form.value = response.data
+      form.value.roleSort = Number(form.value.roleSort)
       roleMenu.then(res => {
         let checkedKeys = res.data.checkedKeys
         checkedKeys.forEach((v: number) => {
@@ -357,7 +358,6 @@ function handleUpdate(row: { [key: string]: any }) {
         })
       })
     })
-    dialog.value.title = '修改角色'
   })
 }
 /** 根据角色ID查询菜单树结构 */

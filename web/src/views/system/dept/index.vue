@@ -209,9 +209,12 @@ function handleUpdate(row: { [key: string]: any }) {
     deptOptions.value = response.data
   })
   getDept(row.deptId).then(response => {
-    form.value = response.data
     dialog.value.visible = true
     dialog.value.title = '修改部门'
+    // 使用nextTick给表单赋值 避免resetFields方法把值重置为上一周期的值
+    nextTick(() => {
+      form.value = response.data
+    })
   })
 }
 /** 提交按钮 */
