@@ -23,6 +23,18 @@ func (*SysPostApi) GetSysPostList(ctx *gin.Context) {
 	}
 }
 
+func (*SysPostApi) OptionSelect(ctx *gin.Context) {
+	var params request.SysPost
+	params.OpenPage = true
+	_ = ctx.ShouldBindJSON(&params)
+	data, err := syssrv.SysPostSrv.SelectPostAll(ctx)
+	if err != nil {
+		result.FailWithMessage(err.Error(), ctx)
+	} else {
+		result.OkWithData(data, ctx)
+	}
+}
+
 func (*SysPostApi) GetSysPost(ctx *gin.Context) {
 	postId, _ := strconv.Atoi(ctx.Param("postId"))
 	data, err := syssrv.SysPostSrv.GetSysPostById(ctx, int64(postId))

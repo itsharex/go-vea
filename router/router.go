@@ -150,6 +150,7 @@ func InitRouter() {
 	postApi := systemctl.SysPostApi{}
 	{
 		postRoutes.POST("/list", postApi.GetSysPostList)
+		postRoutes.GET("/optionSelect", postApi.OptionSelect)
 		postRoutes.GET("/:postId", postApi.GetSysPost)
 		postRoutes.POST("", postApi.AddSysPost)
 		postRoutes.PUT("", postApi.UpdateSysPost)

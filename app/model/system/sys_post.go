@@ -15,7 +15,7 @@ type SysPost struct {
 	PostID     int64      `gorm:"column:post_id;type:bigint;primaryKey;autoIncrement:true" json:"postId"` // 岗位ID
 	PostCode   string     `gorm:"column:post_code;type:varchar(64);not null" json:"postCode"`             // 岗位编码
 	PostName   string     `gorm:"column:post_name;type:varchar(50);not null" json:"postName"`             // 岗位名称
-	PostSort   int64      `gorm:"column:post_sort;type:int;not null" json:"post_Sort"`                    // 显示顺序
+	PostSort   int64      `gorm:"column:post_sort;type:int;not null" json:"postSort"`                     // 显示顺序
 	Status     string     `gorm:"column:status;type:char(1);not null" json:"status"`                      // 状态（0正常 1停用）
 	CreateBy   *string    `gorm:"column:create_by;type:varchar(64)" json:"createBy"`                      // 创建者
 	CreateTime *time.Time `gorm:"column:create_time;type:int unsigned;autoCreateTime" json:"createTime"`  // 创建时间

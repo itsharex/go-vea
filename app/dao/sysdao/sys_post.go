@@ -104,3 +104,13 @@ func (dao *SysPostDao) SelectPostsByUserName(username string) (posts []*system.S
 		Find(&posts).Error
 	return
 }
+
+func (dao *SysPostDao) CheckPostNameUnique(postName string) (sysPost *system.SysPost, err error) {
+	err = dao.DB.Select("post_id, post_name").Where("post_name = ?", postName).First(&sysPost).Error
+	return sysPost, err
+}
+
+func (dao *SysPostDao) CheckPostCodeUnique(postCode string) (sysPost *system.SysPost, err error) {
+	err = dao.DB.Select("post_id, post_code").Where("post_code = ?", postCode).First(&sysPost).Error
+	return sysPost, err
+}
