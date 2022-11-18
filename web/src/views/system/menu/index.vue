@@ -308,6 +308,7 @@ function closeDialog() {
   dialog.value.visible =  false
   menuFormRef.value?.resetFields()
   menuFormRef.value?.clearValidate()
+  form.value.menuId = undefined
 }
 /** 展示下拉图标 */
 function showSelectIcon() {

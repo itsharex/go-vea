@@ -35,7 +35,7 @@ func (*SysRoleService) GetSysRoleById(ctx context.Context, roleId int64) (*syste
 	return data, err
 }
 
-func (*SysRoleService) AddSysRole(ctx context.Context, sysRole *system.SysRole) error {
+func (*SysRoleService) AddSysRole(ctx context.Context, sysRole *system.SysRole) (err error) {
 	sysRoleDao := sysdao.NewSysRoleDao(ctx)
 	hasRoleName := checkRoleNameUnique(ctx, sysRole)
 	hasRoleKey := checkRoleKeyUnique(ctx, sysRole)
@@ -46,7 +46,11 @@ func (*SysRoleService) AddSysRole(ctx context.Context, sysRole *system.SysRole) 
 		global.Logger.Error("新增失败！角色key已存在")
 		return errors.New("新增失败！角色key已存在")
 	}
-	err := sysRoleDao.Insert(sysRole)
+	// todo Transactional
+	// 新增角色信息
+	err = sysRoleDao.Insert(sysRole)
+	// 新增角色菜单关联
+	err = insertRoleMenu(ctx, sysRole)
 	if err != nil {
 		global.Logger.Error(err)
 		return err
@@ -67,11 +71,11 @@ func (*SysRoleService) UpdateRoleById(ctx context.Context, sysRole *system.SysRo
 		global.Logger.Error("修改失败！角色key已存在")
 		return errors.New("修改失败！角色key已存在")
 	}
-
 	// 修改角色信息
 	err = sysRoleDao.UpdateById(sysRole)
 	// 删除角色与菜单关联
 	err = sysRoleMenuDao.DeleteRoleMenuByRoleId(sysRole.RoleID)
+	// 新增角色菜单关联
 	err = insertRoleMenu(ctx, sysRole)
 	if err != nil {
 		global.Logger.Error(err)
@@ -80,9 +84,23 @@ func (*SysRoleService) UpdateRoleById(ctx context.Context, sysRole *system.SysRo
 	return nil
 }
 
-func (*SysRoleService) DeleteSysRoleByIds(ctx context.Context, ids []int64) error {
+func (*SysRoleService) DeleteSysRoleByIds(ctx context.Context, ids []int64) (err error) {
 	sysRoleDao := sysdao.NewSysRoleDao(ctx)
-	err := sysRoleDao.DeleteByIds(ids)
+	for _, roleId := range ids {
+		used := countUserRoleByRoleId(ctx, roleId)
+		if used {
+			return errors.New("该角色已分配，不能删除")
+		}
+	}
+	// todo Transactional
+	// 删除角色与菜单关联
+	roleMenuDao := sysdao.NewSysRoleMenuDao(ctx)
+	err = roleMenuDao.DeleteRoleMenu(ids)
+	// 删除角色与部门关联
+	roleDeptDao := sysdao.NewSysRoleDeptDao(ctx)
+	err = roleDeptDao.DeleteRoleDept(ids)
+	// 删除角色信息
+	err = sysRoleDao.DeleteByIds(ids)
 	if err != nil {
 		global.Logger.Error(err)
 		return err
@@ -204,6 +222,15 @@ func checkRoleKeyUnique(ctx context.Context, sysRole *system.SysRole) bool {
 		return true
 	}
 	return false
+}
+
+func countUserRoleByRoleId(ctx context.Context, roleId int64) bool {
+	sysRoleDao := sysdao.NewSysRoleDao(ctx)
+	count, err := sysRoleDao.CountUserRoleByRoleId(roleId)
+	if err != nil {
+		return true
+	}
+	return count > 0
 }
 
 func insertRoleMenu(ctx context.Context, sysRole *system.SysRole) error {

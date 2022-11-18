@@ -246,11 +246,16 @@ function resetQuery() {
 }
 /** 删除按钮操作 */
 function handleDelete(row: { [key: string]: any }) {
-  const roleIds = row.roleId || ids.value
+  let roleIds = []
+  if (row.roleId !== undefined) {
+    roleIds.push(row.roleId)
+  } else {
+    roleIds = ids.value
+  }
   proxy.$modal
     .confirm('是否确认删除角色编号为"' + roleIds + '"的数据项?')
     .then(function () {
-      return delRole(roleIds)
+      return delRole({ids: roleIds})
     })
     .then(() => {
       getList()
@@ -332,6 +337,7 @@ function closeDialog() {
   dialog.value.visible = false
   roleFormRef.value?.resetFields()
   roleFormRef.value?.clearValidate()
+  form.value.roleId = undefined
 }
 /** 添加角色 */
 function handleAdd() {

@@ -23,6 +23,10 @@ func (dao *SysRoleDeptDao) DeleteRoleDeptByRoleId(roleId int64) error {
 	return dao.DB.Where("role_id = ?", roleId).Delete(&system.SysRoleDept{}).Error
 }
 
+func (dao *SysRoleDeptDao) DeleteRoleDept(ids []int64) error {
+	return dao.DB.Where("role_id in (?)", ids).Delete(&system.SysRoleDept{}).Error
+}
+
 func (dao *SysRoleDeptDao) BatchRoleDept(list []*system.SysRoleDept) error {
 	return dao.DB.Create(&list).Error
 }

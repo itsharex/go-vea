@@ -139,3 +139,8 @@ func (dao *SysRoleDao) SelectRolesByUserName(username string) (roles []*system.S
 		Find(&roles).Error
 	return
 }
+
+func (dao *SysRoleDao) CountUserRoleByRoleId(roleId int64) (count int64, err error) {
+	err = dao.DB.Model(&system.SysUserRole{}).Where("role_id = ?", roleId).Count(&count).Error
+	return
+}

@@ -9,5 +9,5 @@ export interface PageResult<T> {
 }
 
 export interface Ids {
-  ids: string[]
+  ids: string[] | number[]
 }

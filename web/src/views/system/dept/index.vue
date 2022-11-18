@@ -174,6 +174,7 @@ function closeDialog() {
   dialog.value.visible =  false
   deptFormRef.value?.resetFields()
   deptFormRef.value?.clearValidate()
+  form.value.deptId = undefined
 }
 /** 搜索按钮操作 */
 function handleQuery() {

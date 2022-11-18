@@ -23,6 +23,10 @@ func (dao *SysRoleMenuDao) DeleteRoleMenuByRoleId(roleId int64) error {
 	return dao.DB.Where("role_id = ?", roleId).Delete(&system.SysRoleMenu{}).Error
 }
 
+func (dao *SysRoleMenuDao) DeleteRoleMenu(ids []int64) error {
+	return dao.DB.Where("role_id in (?)", ids).Delete(&system.SysRoleMenu{}).Error
+}
+
 func (dao *SysRoleMenuDao) BatchRoleMenu(list []*system.SysRoleMenu) error {
 	return dao.DB.Create(&list).Error
 }
