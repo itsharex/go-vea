@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="参数名称" prop="configName">
         <el-input v-model="queryParams.configName" placeholder="请输入参数名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
@@ -62,8 +62,8 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="configRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" @close="closeDialog" append-to-body>
+      <el-form ref="configFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="参数名称" prop="configName">
           <el-input v-model="form.configName" placeholder="请输入参数名称" />
         </el-form-item>
@@ -87,7 +87,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button @click="closeDialog">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -96,23 +96,33 @@
 
 <script lang="ts" setup name="Config">
 import { listConfig, getConfig, delConfig, addConfig, updateConfig, refreshCache } from '@/api/system/config'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
+import { ConfigFormData } from '@/types/api/config'
+import { Dialog } from '@/types/common'
 
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 const { sys_yes_no } = proxy.useDict('sys_yes_no')
 
 const configList = ref([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref([])
 const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
-const title = ref('')
 const dateRange = ref([])
 
+const queryFormRef = ref<ElForm>(null)
+const configFormRef = ref<ElForm>(null)
+
 const data = reactive({
-  form: {},
+  dialog: {
+    visible: false,
+    title: ''
+  } as Dialog,
+  form: {
+    configType: 'Y'
+  } as  ConfigFormData,
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -127,7 +137,7 @@ const data = reactive({
   }
 })
 
-const { queryParams, form, rules } = toRefs(data)
+const { dialog, queryParams, form, rules } = toRefs(data)
 
 /** 查询参数列表 */
 function getList() {
@@ -138,22 +148,12 @@ function getList() {
     loading.value = false
   })
 }
-/** 取消按钮 */
-function cancel() {
-  open.value = false
-  reset()
-}
-/** 表单重置 */
-function reset() {
-  form.value = {
-    configId: undefined,
-    configName: undefined,
-    configKey: undefined,
-    configValue: undefined,
-    configType: 'Y',
-    remark: undefined
-  }
-  proxy.resetForm('configRef')
+/** 关闭弹窗 */
+function closeDialog() {
+  dialog.value.visible = false
+  configFormRef.value?.resetFields()
+  configFormRef.value?.clearValidate()
+  form.value.configId = undefined
 }
 /** 搜索按钮操作 */
 function handleQuery() {
@@ -163,45 +163,45 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
-  proxy.resetForm('queryRef')
+  queryFormRef.value.resetFields()
   handleQuery()
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.configId)
+function handleSelectionChange(selection:any) {
+  ids.value = selection.map((item:any) => item.configId)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
 /** 新增按钮操作 */
 function handleAdd() {
-  reset()
-  open.value = true
-  title.value = '添加参数'
+  dialog.value.visible = true
+  dialog.value.title = '添加参数'
 }
 /** 修改按钮操作 */
-function handleUpdate(row) {
-  reset()
+function handleUpdate(row: { [key: string]: any }) {
   const configId = row.configId || ids.value
   getConfig(configId).then(response => {
-    form.value = response.data
-    open.value = true
-    title.value = '修改参数'
+    dialog.value.visible = true
+    dialog.value.title = '修改参数'
+    nextTick(() => {
+      form.value = response.data
+    })
   })
 }
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs['configRef'].validate(valid => {
+  configFormRef.value.validate((valid:any) => {
     if (valid) {
       if (form.value.configId != undefined) {
-        updateConfig(form.value).then(response => {
+        updateConfig(form.value).then(() => {
           proxy.$modal.msgSuccess('修改成功')
-          open.value = false
+          closeDialog()
           getList()
         })
       } else {
-        addConfig(form.value).then(response => {
+        addConfig(form.value).then(() => {
           proxy.$modal.msgSuccess('新增成功')
-          open.value = false
+          closeDialog()
           getList()
         })
       }
@@ -244,5 +244,7 @@ function handleRefreshCache() {
   })
 }
 
-getList()
+onMounted(() => {
+  getList()
+})
 </script>

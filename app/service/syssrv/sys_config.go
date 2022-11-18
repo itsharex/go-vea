@@ -8,6 +8,7 @@ import (
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/global"
+	"gorm.io/gorm"
 )
 
 type SysConfigService struct{}
@@ -57,8 +58,8 @@ func (s *SysConfigService) SelectCaptchaEnabled(ctx context.Context) (bool, erro
 
 func (s *SysConfigService) AddSysConfig(ctx context.Context, sysConfig *system.SysConfig) error {
 	sysConfigDao := sysdao.NewSysConfigDao(ctx)
-	r, _ := s.CheckConfigKeyUnique(ctx, sysConfig)
-	if !r {
+	configKeyUnique := s.checkConfigKeyUnique(ctx, sysConfig)
+	if !configKeyUnique {
 		global.Logger.Error("新增失败！已存在该配置key")
 		return errors.New("新增失败！已存在该配置key")
 	}
@@ -73,8 +74,8 @@ func (s *SysConfigService) AddSysConfig(ctx context.Context, sysConfig *system.S
 
 func (s *SysConfigService) UpdateSysConfig(ctx context.Context, sysConfig *system.SysConfig) error {
 	sysConfigDao := sysdao.NewSysConfigDao(ctx)
-	r, _ := s.CheckConfigKeyUnique(ctx, sysConfig)
-	if !r {
+	configKeyUnique := s.checkConfigKeyUnique(ctx, sysConfig)
+	if !configKeyUnique {
 		global.Logger.Error("修改失败！已存在该配置key")
 		return errors.New("修改失败！已存在该配置key")
 	}
@@ -104,18 +105,24 @@ func (*SysConfigService) DeleteSysConfigByIds(ctx context.Context, ids []int64) 
 	return nil
 }
 
-func (*SysConfigService) CheckConfigKeyUnique(ctx context.Context, sysConfig *system.SysConfig) (bool, error) {
-	sysConfigDao := sysdao.NewSysConfigDao(ctx)
-	r, e := sysConfigDao.CheckConfigKeyUnique(sysConfig.ConfigKey)
-	if r > 0 || e != nil {
-		return false, e
-	}
-	return true, e
-}
-
 func (*SysConfigService) ResetConfigCache(ctx context.Context) {
 	clearConfigCache(ctx)
 	loadingConfigCache(ctx)
+}
+
+func (*SysConfigService) checkConfigKeyUnique(ctx context.Context, sysConfig *system.SysConfig) bool {
+	sysConfigDao := sysdao.NewSysConfigDao(ctx)
+	data, err := sysConfigDao.CheckConfigKeyUnique(sysConfig.ConfigKey)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return true
+		}
+		return false
+	}
+	if data.ConfigID != 0 && data.ConfigID != sysConfig.ConfigID {
+		return false
+	}
+	return true
 }
 
 func loadingConfigCache(ctx context.Context) {
