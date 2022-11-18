@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="公告标题" prop="noticeTitle">
         <el-input v-model="queryParams.noticeTitle" placeholder="请输入公告标题" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -59,8 +59,8 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 添加或修改公告对话框 -->
-    <el-dialog :title="title" v-model="open" width="780px" append-to-body>
-      <el-form ref="noticeRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="780px" append-to-body>
+      <el-form ref="noticeFormRef" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="公告标题" prop="noticeTitle">
@@ -91,7 +91,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button @click="closeDialog">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -100,22 +100,32 @@
 
 <script lang="ts" setup name="Notice">
 import { listNotice, getNotice, delNotice, addNotice, updateNotice } from '@/api/system/notice'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
+import { NoticeFormData } from '@/types/api/notice'
+import { Dialog } from '@/types/common'
 
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 const { sys_notice_status, sys_notice_type } = proxy.useDict('sys_notice_status', 'sys_notice_type')
 
 const noticeList = ref([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref([])
 const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
-const title = ref('')
+
+const queryFormRef = ref<ElForm>(null)
+const noticeFormRef = ref<ElForm>(null)
 
 const data = reactive({
-  form: {},
+  dialog: {
+    visible: false,
+    title: ''
+  } as Dialog,
+  form: {
+    status: '0'
+  } as NoticeFormData,
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -129,7 +139,7 @@ const data = reactive({
   }
 })
 
-const { queryParams, form, rules } = toRefs(data)
+const { dialog, queryParams, form, rules } = toRefs(data)
 
 /** 查询公告列表 */
 function getList() {
@@ -140,21 +150,12 @@ function getList() {
     loading.value = false
   })
 }
-/** 取消按钮 */
-function cancel() {
-  open.value = false
-  reset()
-}
-/** 表单重置 */
-function reset() {
-  form.value = {
-    noticeId: undefined,
-    noticeTitle: undefined,
-    noticeType: undefined,
-    noticeContent: undefined,
-    status: '0'
-  }
-  proxy.resetForm('noticeRef')
+/** 关闭弹窗 */
+function closeDialog() {
+  dialog.value.visible = false
+  noticeFormRef.value?.resetFields()
+  noticeFormRef.value?.clearValidate()
+  form.value.noticeId = undefined
 }
 /** 搜索按钮操作 */
 function handleQuery() {
@@ -163,45 +164,45 @@ function handleQuery() {
 }
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm('queryRef')
+  queryFormRef.value.resetFields()
   handleQuery()
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.noticeId)
+function handleSelectionChange(selection:any) {
+  ids.value = selection.map((item:any) => item.noticeId)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
 /** 新增按钮操作 */
 function handleAdd() {
-  reset()
-  open.value = true
-  title.value = '添加公告'
+  dialog.value.visible = true
+  dialog.value.title = '添加公告'
 }
 /**修改按钮操作 */
-function handleUpdate(row) {
-  reset()
+function handleUpdate(row: { [key: string]: any }) {
   const noticeId = row.noticeId || ids.value
   getNotice(noticeId).then(response => {
-    form.value = response.data
-    open.value = true
-    title.value = '修改公告'
+    dialog.value.visible = true
+    dialog.value.title = '修改公告'
+    nextTick(() => {
+      form.value = response.data
+    })
   })
 }
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs['noticeRef'].validate(valid => {
+  noticeFormRef.value.validate((valid:any) => {
     if (valid) {
       if (form.value.noticeId != undefined) {
-        updateNotice(form.value).then(response => {
+        updateNotice(form.value).then(() => {
           proxy.$modal.msgSuccess('修改成功')
-          open.value = false
+          closeDialog()
           getList()
         })
       } else {
-        addNotice(form.value).then(response => {
+        addNotice(form.value).then(() => {
           proxy.$modal.msgSuccess('新增成功')
-          open.value = false
+          closeDialog()
           getList()
         })
       }
@@ -209,12 +210,17 @@ function submitForm() {
   })
 }
 /** 删除按钮操作 */
-function handleDelete(row) {
-  const noticeIds = row.noticeId || ids.value
+function handleDelete(row: { [key: string]: any }) {
+  let noticeIds = []
+  if (row.noticeId !== undefined) {
+    noticeIds.push(row.noticeId)
+  } else {
+    noticeIds = ids.value
+  }
   proxy.$modal
     .confirm('是否确认删除公告编号为"' + noticeIds + '"的数据项？')
     .then(function () {
-      return delNotice(noticeIds)
+      return delNotice({ids: noticeIds})
     })
     .then(() => {
       getList()
@@ -223,5 +229,7 @@ function handleDelete(row) {
     .catch(() => {})
 }
 
-getList()
+onMounted(() => {
+  getList()
+})
 </script>

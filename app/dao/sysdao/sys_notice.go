@@ -70,7 +70,7 @@ func (dao *SysNoticeDao) Insert(sysNotice *system.SysNotice) error {
 }
 
 func (dao *SysNoticeDao) UpdateById(sysNotice *system.SysNotice) error {
-	return dao.DB.Save(sysNotice).Error
+	return dao.DB.Updates(sysNotice).Error
 }
 
 func (dao *SysNoticeDao) DeleteById(id int64) error {
