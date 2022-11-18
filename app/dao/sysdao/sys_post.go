@@ -77,7 +77,7 @@ func (dao *SysPostDao) Insert(sysPost *system.SysPost) error {
 }
 
 func (dao *SysPostDao) UpdateById(sysPost *system.SysPost) error {
-	return dao.DB.Save(sysPost).Error
+	return dao.DB.Updates(sysPost).Error
 }
 
 func (dao *SysPostDao) DeleteById(id int64) error {

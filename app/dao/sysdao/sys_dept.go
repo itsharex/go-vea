@@ -86,7 +86,7 @@ func (dao *SysDeptDao) Insert(sysDept *system.SysDept) error {
 }
 
 func (dao *SysDeptDao) UpdateById(sysDept *system.SysDept) error {
-	return dao.DB.Save(sysDept).Error
+	return dao.DB.Updates(sysDept).Error
 }
 
 func (dao *SysDeptDao) DeleteById(id int64) error {

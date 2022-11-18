@@ -68,7 +68,7 @@ func (dao *SysMenuDao) Insert(sysMenu *system.SysMenu) error {
 }
 
 func (dao *SysMenuDao) UpdateById(sysMenu *system.SysMenu) error {
-	return dao.DB.Save(sysMenu).Error
+	return dao.DB.Updates(sysMenu).Error
 }
 
 func (dao *SysMenuDao) DeleteById(menuId int64) error {
