@@ -9,6 +9,7 @@ import (
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/global"
+	"gorm.io/gorm"
 )
 
 type SysDictTypeService struct{}
@@ -62,8 +63,15 @@ func (*SysDictTypeService) SelectDictTypeByType(ctx context.Context, dictType re
 	return data, err
 }
 
-func (*SysDictTypeService) DeleteDictTypeByIds(ctx context.Context, ids []int64) error {
+func (s *SysDictTypeService) DeleteDictTypeByIds(ctx context.Context, ids []int64) error {
 	sysDictTypeDao := sysdao.NewSysDictTypeDao(ctx)
+	for _, dictId := range ids {
+		sysDictType, _ := sysDictTypeDao.SelectById(dictId)
+		used := s.countDictDataByType(ctx, sysDictType.DictType)
+		if sysDictType != nil && used {
+			return errors.New("所选字典已分配,不能删除")
+		}
+	}
 	err := sysDictTypeDao.DeleteByIds(ids)
 	if err != nil {
 		global.Logger.Error(err)
@@ -74,12 +82,13 @@ func (*SysDictTypeService) DeleteDictTypeByIds(ctx context.Context, ids []int64)
 
 func (s *SysDictTypeService) AddDictType(ctx context.Context, sysDictType *system.SysDictType) error {
 	sysDictTypeDao := sysdao.NewSysDictTypeDao(ctx)
-	r, _ := s.CheckDictTypeUnique(ctx, sysDictType)
-	if !r {
+	dictTypeUnique := s.checkDictTypeUnique(ctx, sysDictType)
+	if !dictTypeUnique {
 		global.Logger.Error("新增失败！已存在该字典类型")
 		return errors.New("新增失败！已存在该字典类型")
 	}
 	err := sysDictTypeDao.Insert(sysDictType)
+	// todo 更新缓存
 	if err != nil {
 		global.Logger.Error(err)
 		return err
@@ -89,12 +98,13 @@ func (s *SysDictTypeService) AddDictType(ctx context.Context, sysDictType *syste
 
 func (s *SysDictTypeService) UpdateDictType(ctx context.Context, sysDictType *system.SysDictType) error {
 	sysDictTypeDao := sysdao.NewSysDictTypeDao(ctx)
-	r, _ := s.CheckDictTypeUnique(ctx, sysDictType)
-	if !r {
+	dictTypeUnique := s.checkDictTypeUnique(ctx, sysDictType)
+	if !dictTypeUnique {
 		global.Logger.Error("修改失败！已存在该字典类型")
 		return errors.New("修改失败！已存在该字典类型")
 	}
 	err := sysDictTypeDao.UpdateById(sysDictType)
+	// todo 更新缓存
 	if err != nil {
 		global.Logger.Error(err)
 		return err
@@ -102,14 +112,28 @@ func (s *SysDictTypeService) UpdateDictType(ctx context.Context, sysDictType *sy
 	return nil
 }
 
-func (*SysDictTypeService) CheckDictTypeUnique(ctx context.Context, sysDictType *system.SysDictType) (bool, error) {
+func (*SysDictTypeService) checkDictTypeUnique(ctx context.Context, sysDictType *system.SysDictType) bool {
 	sysDictTypeDao := sysdao.NewSysDictTypeDao(ctx)
-	count, err := sysDictTypeDao.CheckDictTypeUnique(sysDictType.DictType)
-	if count > 0 || err != nil {
-		global.Logger.Error(err)
-		return false, err
+	data, err := sysDictTypeDao.CheckDictTypeUnique(sysDictType.DictType)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return true
+		}
+		return false
 	}
-	return true, err
+	if data.DictID != 0 && data.DictID != sysDictType.DictID {
+		return false
+	}
+	return true
+}
+
+func (*SysDictTypeService) countDictDataByType(ctx context.Context, dictType string) bool {
+	sysDictTypeDao := sysdao.NewSysDictTypeDao(ctx)
+	count, err := sysDictTypeDao.CountDictDataByType(dictType)
+	if err != nil {
+		return true
+	}
+	return count > 0
 }
 
 func (*SysDictTypeService) ResetDictCache(ctx context.Context) (err error) {

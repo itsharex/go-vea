@@ -5,7 +5,7 @@ export function listType(data) {
   return request({
     url: '/system/dict/type/list',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
@@ -36,10 +36,11 @@ export function updateType(data) {
 }
 
 // 删除字典类型
-export function delType(dictId) {
+export function delType(data) {
   return request({
-    url: '/system/dict/type/' + dictId,
-    method: 'delete'
+    url: '/system/dict/type',
+    method: 'delete',
+    data: data
   })
 }
 
@@ -54,7 +55,7 @@ export function refreshCache() {
 // 获取字典选择框列表
 export function optionselect() {
   return request({
-    url: '/system/dict/type/optionselect',
+    url: '/system/dict/type/optionSelect',
     method: 'get'
   })
 }

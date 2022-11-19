@@ -71,14 +71,19 @@ func (dao *SysDictTypeDao) Insert(dictType *system.SysDictType) error {
 }
 
 func (dao *SysDictTypeDao) UpdateById(dictType *system.SysDictType) error {
-	return dao.DB.Save(dictType).Error
+	return dao.DB.Updates(dictType).Error
 }
 
 func (dao *SysDictTypeDao) DeleteByIds(ids []int64) error {
 	return dao.DB.Where("dict_id in (?)", ids).Delete(&system.SysDictType{}).Error
 }
 
-func (dao *SysDictTypeDao) CheckDictTypeUnique(dictType string) (count int64, err error) {
-	err = dao.DB.Model(&system.SysDictType{}).Where("dict_type=?", dictType).Count(&count).Error
+func (dao *SysDictTypeDao) CheckDictTypeUnique(dictType string) (sysDictType *system.SysDictType, err error) {
+	err = dao.DB.Model(&system.SysDictType{}).Where("dict_type=?", dictType).First(&sysDictType).Error
+	return
+}
+
+func (dao *SysDictTypeDao) CountDictDataByType(dictType string) (count int64, err error) {
+	err = dao.DB.Model(&system.SysDictData{}).Where("dict_type = ?", dictType).Count(&count).Error
 	return
 }

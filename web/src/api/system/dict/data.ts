@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 查询字典数据列表
-export function listData(query) {
+export function listData(data) {
   return request({
     url: '/system/dict/data/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: data
   })
 }
 
@@ -44,9 +44,10 @@ export function updateData(data) {
 }
 
 // 删除字典数据
-export function delData(dictCode) {
+export function delData(data) {
   return request({
-    url: '/system/dict/data/' + dictCode,
-    method: 'delete'
+    url: '/system/dict/data',
+    method: 'delete',
+    data: data
   })
 }
