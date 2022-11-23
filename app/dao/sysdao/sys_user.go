@@ -202,3 +202,7 @@ func (dao *SysUserDao) SelectUnallocatedList(sysUser *request.SysUser) (p *page.
 	}
 	return p, err
 }
+
+func (dao *SysUserDao) UpdateUserProfile(user *system.SysUser) error {
+	return dao.DB.Updates(user).Error
+}

@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/controller/common"
+	"go-vea/app/controller/monitorctl"
 	"go-vea/app/controller/systemctl"
 	"go-vea/configs"
 	"go-vea/middleware"
@@ -155,6 +156,34 @@ func InitRouter() {
 		postRoutes.POST("", postApi.AddSysPost)
 		postRoutes.PUT("", postApi.UpdateSysPost)
 		postRoutes.DELETE("", postApi.DeleteSysPost)
+	}
+
+	/* 监控模块 */
+	monitorRoutes := r.Group("monitor")
+	// jwt 认证
+	monitorRoutes.Use(middleware.JWT())
+
+	// 登录日志
+	loginLogRoutes := monitorRoutes.Group("loginLog")
+	loginLogApi := monitorctl.SysLoginLog{}
+	{
+		loginLogRoutes.POST("/list", loginLogApi.GetLoginLogList)
+		loginLogRoutes.GET("/:id", loginLogApi.GetLoginLog)
+		loginLogRoutes.DELETE("", loginLogApi.DeleteLoginLog)
+		loginLogRoutes.PUT("", loginLogApi.UpdateLoginLog)
+		loginLogRoutes.DELETE("/clean", loginLogApi.CleanLoginLog)
+		loginLogRoutes.GET("/unlock/:username", loginLogApi.Unlock)
+	}
+
+	// 操作日志
+	operLogRoutes := monitorRoutes.Group("operLog")
+	operLogApi := monitorctl.SysOperLog{}
+	{
+		operLogRoutes.POST("/list", operLogApi.GetOperLogList)
+		operLogRoutes.GET("/:operId", operLogApi.GetOperLog)
+		operLogRoutes.DELETE("", operLogApi.DeleteOperLog)
+		operLogRoutes.DELETE("/clean", operLogApi.CleanOperLog)
+		operLogRoutes.PUT("", operLogApi.UpdateOperLog)
 	}
 
 	_ = r.Run(configs.AppConfig.Server.Port)

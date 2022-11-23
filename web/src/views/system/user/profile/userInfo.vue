@@ -24,6 +24,7 @@
 
 <script lang="ts" setup>
 import { updateUserProfile } from '@/api/system/user'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
 
 const props = defineProps({
   user: {
@@ -31,7 +32,7 @@ const props = defineProps({
   }
 })
 
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 
 const rules = ref({
   nickname: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],
@@ -47,9 +48,9 @@ const rules = ref({
 
 /** 提交按钮 */
 function submit() {
-  proxy.$refs.userRef.validate(valid => {
+  proxy.$refs.userRef.validate((valid:any) => {
     if (valid) {
-      updateUserProfile(props.user).then(response => {
+      updateUserProfile(props.user).then(() => {
         proxy.$modal.msgSuccess('修改成功')
       })
     }

@@ -28,26 +28,27 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" @click="handleQuery"><ep:search /> 搜索</el-button>
+        <el-button @click="resetQuery"><ep:refresh /> 重置</el-button>
       </el-form-item>
     </el-form>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['monitor:operlog:remove']">删除</el-button>
+        <el-button type="danger" plain :disabled="multiple" @click="handleDelete" v-hasPerms="['monitor:operlog:remove']"><ep:delete /> 删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" @click="handleClean" v-hasPermi="['monitor:operlog:remove']">清空</el-button>
+        <el-button type="danger" plain @click="handleClean" v-hasPerms="['monitor:operlog:remove']"><ep:delete />清空</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['monitor:operlog:export']">导出</el-button>
+        <el-button type="warning" plain @click="handleExport" v-hasPerms="['monitor:operlog:export']"><ep:download /> 导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table
-      ref="operlogRef"
+      border
+      ref="operlogTableRef"
       v-loading="loading"
       :data="operlogList"
       @selection-change="handleSelectionChange"
@@ -85,7 +86,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button type="text" icon="View" @click="handleView(scope.row, scope.index)" v-hasPermi="['monitor:operlog:query']">详细</el-button>
+          <el-button link type="primary" @click="handleView(scope.row, scope.index)" v-hasPerms="['monitor:operlog:query']"><ep:view /> 详细</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -93,7 +94,7 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 操作日志详细 -->
-    <el-dialog title="操作日志详细" v-model="open" width="700px" append-to-body>
+    <el-dialog :title="title" v-model="open" width="700px" append-to-body>
       <el-form :model="form" label-width="100px">
         <el-row>
           <el-col :span="12">
@@ -136,10 +137,12 @@
   </div>
 </template>
 
-<script setup name="Operlog">
-import { list, delOperlog, cleanOperlog } from '@/api/monitor/operlog'
+<script lang="ts" setup name="Operlog">
+import { list, delOperlog, cleanOperlog } from '@/api/monitor/operLog'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
+import { OperLogFormData } from '@/types/api/operLog'
 
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 const { sys_oper_type, sys_common_status } = proxy.useDict('sys_oper_type', 'sys_common_status')
 
 const operlogList = ref([])
@@ -155,7 +158,7 @@ const dateRange = ref([])
 const defaultSort = ref({ prop: 'operTime', order: 'descending' })
 
 const data = reactive({
-  form: {},
+  form: {} as OperLogFormData,
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -172,8 +175,8 @@ const { queryParams, form } = toRefs(data)
 function getList() {
   loading.value = true
   list(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
-    operlogList.value = response.rows
-    total.value = response.total
+    operlogList.value = response.data.rows
+    total.value = response.data.total
     loading.value = false
   })
 }
@@ -191,11 +194,11 @@ function resetQuery() {
   dateRange.value = []
   proxy.resetForm('queryRef')
   queryParams.value.pageNum = 1
-  proxy.$refs['operlogRef'].sort(defaultSort.value.prop, defaultSort.value.order)
+  proxy.$refs['operlogTableRef'].sort(defaultSort.value.prop, defaultSort.value.order)
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.operId)
+function handleSelectionChange(selection:any) {
+  ids.value = selection.map((item:any) => item.operId)
   multiple.value = !selection.length
 }
 /** 排序触发事件 */
@@ -205,12 +208,13 @@ function handleSortChange(column, prop, order) {
   getList()
 }
 /** 详细按钮操作 */
-function handleView(row) {
+function handleView(row: { [key: string]: any }) {
   open.value = true
+  title.value = '操作日志详细'
   form.value = row
 }
 /** 删除按钮操作 */
-function handleDelete(row) {
+function handleDelete(row: { [key: string]: any }) {
   const operIds = row.operId || ids.value
   proxy.$modal
     .confirm('是否确认删除日志编号为"' + operIds + '"的数据项?')
@@ -247,5 +251,7 @@ function handleExport() {
   )
 }
 
-getList()
+onMounted(() => {
+  getList()
+})
 </script>

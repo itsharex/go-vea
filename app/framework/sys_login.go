@@ -11,6 +11,7 @@ import (
 	"go-vea/app/service/syssrv"
 	"go-vea/global"
 	"go-vea/util/captcha"
+	"time"
 )
 
 type SysLoginService struct{}
@@ -34,17 +35,29 @@ func (s *SysLoginService) Login(ctx *gin.Context, loginBody *request.LoginBody) 
 		global.Logger.Error(err)
 		return "", err
 	}
-	token, err := TokenSrv.CreateToken(loginUser)
+	token, err := TokenSrv.CreateToken(ctx, loginUser)
 	if err != nil {
 		global.Logger.Error(err)
 		return "", err
 	}
-	recordLoginInfo(loginUser.UserID)
+	err = recordLoginInfo(ctx, loginUser.UserID)
 	return token, err
 }
 
-func recordLoginInfo(userId int64) {
-	// todo 记录登录信息
+func recordLoginInfo(ctx *gin.Context, userId int64) error {
+	sysUserDao := sysdao.NewSysUserDao(ctx)
+	user := &system.SysUser{}
+	user.UserID = userId
+	// todo
+	user.LoginIP = "127.0.0.1"
+	now := time.Now()
+	user.LoginDate = &now
+
+	err := sysUserDao.UpdateUserProfile(user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func loadUserByUsername(ctx *gin.Context, loginBody *request.LoginBody) (*response.LoginUser, error) {

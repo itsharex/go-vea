@@ -37,7 +37,7 @@ func (s *SysPasswordService) Validate(sysUser *system.SysUser, loginBody *reques
 		return errors.New("密码错误")
 	} else {
 		// 成功 删除重试记录
-		clearLoginRecordCache(sysUser.Username)
+		s.ClearLoginRecordCache(sysUser.Username)
 	}
 	return nil
 }
@@ -48,7 +48,7 @@ func matches(loginBody *request.LoginBody, sysUser *system.SysUser) bool {
 	return util.PasswordVerify(loginBody.Password, sysUser.Password)
 }
 
-func clearLoginRecordCache(loginName string) {
+func (*SysPasswordService) ClearLoginRecordCache(loginName string) {
 	k := global.Redis.Exists(context.Background(), getCacheKey(loginName))
 	if k != nil {
 		global.Redis.Del(context.Background(), getCacheKey(loginName))
