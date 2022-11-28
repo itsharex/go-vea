@@ -1,14 +1,12 @@
 package request
 
 import (
+	"go-vea/app/common/base"
 	"time"
 )
 
 type SysDictType struct {
-	OpenPage   bool      `json:"openPage"`   // 开启分页
-	PageNum    int       `json:"pageNum"`    // 页码
-	PageSize   int       `json:"pageSize"`   // 每页大小
-	Ids        []int64   `json:"ids"`        // dictIds
+	base.CommonModel
 	DictID     int64     `json:"dictId"`     // 字典主键
 	DictName   string    `json:"dictName"`   // 字典名称
 	DictType   string    `json:"dictType"`   // 字典类型

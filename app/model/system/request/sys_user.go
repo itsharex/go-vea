@@ -1,15 +1,13 @@
 package request
 
 import (
+	"go-vea/app/common/base"
 	"go-vea/app/model/system"
 	"time"
 )
 
 type SysUser struct {
-	OpenPage    bool      `json:"openPage"`                 // 开启分页
-	PageNum     int       `json:"pageNum" form:"pageNum"`   // 页码
-	PageSize    int       `json:"pageSize" form:"pageSize"` // 每页大小
-	Ids         []int64   `json:"ids"`                      // userIds
+	base.CommonModel
 	UserID      int64     `json:"userId" form:"userId"`     // 用户ID
 	DeptID      int64     `json:"deptId" form:"deptId"`     // 部门ID
 	RoleID      string    `json:"roleId"`                   // 角色id
