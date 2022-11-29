@@ -16,7 +16,7 @@
   </el-form>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { updateUserPwd } from '@/api/system/user'
 
 const { proxy } = getCurrentInstance()
@@ -48,9 +48,9 @@ const rules = ref({
 
 /** 提交按钮 */
 function submit() {
-  proxy.$refs.pwdRef.validate(valid => {
+  proxy.$refs.pwdRef.validate((valid:any) => {
     if (valid) {
-      updateUserPwd(user.oldPassword, user.newPassword).then(response => {
+      updateUserPwd({oldPassword: user.oldPassword, newPassword: user.newPassword}).then(() => {
         proxy.$modal.msgSuccess('修改成功')
       })
     }

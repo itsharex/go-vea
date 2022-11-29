@@ -103,6 +103,10 @@ func (dao *SysUserDao) UpdateById(sysUser *system.SysUser) error {
 	return dao.DB.Updates(sysUser).Error
 }
 
+func (dao *SysUserDao) ResetPwd(pwd *request.ResetPwd) error {
+	return dao.DB.Model(&system.SysUser{}).Where("username = ?", pwd.Username).Update("password", pwd.NewPassword).Error
+}
+
 func (dao *SysUserDao) DeleteById(id int64) error {
 	return dao.DB.Where("user_id = ?", id).Delete(&system.SysUser{}).Error
 }

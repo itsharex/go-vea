@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go-vea/app/model/system/response"
@@ -68,8 +69,9 @@ func (t *TokenService) SetLoginUser(user *response.LoginUser) {
 }
 
 // CreateToken 创建令牌
-func (t *TokenService) CreateToken(user *response.LoginUser) (string, error) {
+func (t *TokenService) CreateToken(ctx *gin.Context, user *response.LoginUser) (string, error) {
 	user.UserKey = uuid.New().String()
+	setUserAgent(ctx, user)
 	refreshToken(user)
 
 	token, err := util.GenerateToken(user.UserKey)
@@ -88,8 +90,14 @@ func (t *TokenService) VerifyToken(user *response.LoginUser) {
 	}
 }
 
-func (t *TokenService) SetUserAgent(user *response.LoginUser) {
-
+func setUserAgent(ctx *gin.Context, user *response.LoginUser) {
+	ua := ctx.GetHeader("User-Agent")
+	// todo
+	fmt.Println("ua: " + ua)
+	user.IpAddr = ctx.ClientIP()
+	user.LoginLocation = ""
+	user.Browser = ""
+	user.Os = ""
 }
 
 // refreshToken 刷新token

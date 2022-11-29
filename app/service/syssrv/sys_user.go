@@ -80,6 +80,12 @@ func (*SysUserService) UpdateUserById(ctx context.Context, addSysUser *request.A
 	return nil
 }
 
+func (*SysUserService) UpdateUserProfile(ctx context.Context, user *system.SysUser) error {
+	sysUserDao := sysdao.NewSysUserDao(ctx)
+	err := sysUserDao.UpdateById(user)
+	return err
+}
+
 func (*SysUserService) DeleteSysUserById(ctx context.Context, userId int64) (err error) {
 	sysUserDao := sysdao.NewSysUserDao(ctx)
 	sysUserRoleDao := sysdao.NewSysUserRoleDao(ctx)
@@ -151,6 +157,16 @@ func (*SysUserService) SelectUserPostGroup(ctx context.Context, username string)
 func (*SysUserService) ResetPwd(ctx context.Context, sysUser *system.SysUser) error {
 	sysUserDao := sysdao.NewSysUserDao(ctx)
 	err := sysUserDao.UpdateById(sysUser)
+	if err != nil {
+		global.Logger.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (*SysUserService) ResetUserPwd(ctx context.Context, resetPwd *request.ResetPwd) error {
+	sysUserDao := sysdao.NewSysUserDao(ctx)
+	err := sysUserDao.ResetPwd(resetPwd)
 	if err != nil {
 		global.Logger.Error(err)
 		return err

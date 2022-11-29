@@ -19,7 +19,6 @@ const MaxRetryCount int = 5
 const LockTime = 10 * time.Minute
 
 func (s *SysPasswordService) Validate(sysUser *system.SysUser, loginBody *request.LoginBody) error {
-
 	retryCount, err := global.Redis.Get(context.Background(), getCacheKey(sysUser.Username)).Int()
 	if err != nil {
 		retryCount = 0
@@ -42,8 +41,7 @@ func (s *SysPasswordService) Validate(sysUser *system.SysUser, loginBody *reques
 	return nil
 }
 
-// 密码匹配
-// 表单输入的密码与根据用户名查出的密码比对
+// Matches 密码匹配 表单输入的密码与根据用户名查出的密码比对 明文与密文对比
 func matches(loginBody *request.LoginBody, sysUser *system.SysUser) bool {
 	return util.PasswordVerify(loginBody.Password, sysUser.Password)
 }
