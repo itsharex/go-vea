@@ -7,6 +7,7 @@ import (
 	"go-vea/app/dao/sysdao"
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
+	"go-vea/app/model/system/response"
 	"go-vea/global"
 	"go-vea/util"
 	"gorm.io/gorm"
@@ -27,9 +28,12 @@ func (*SysUserService) GetSysUserList(ctx context.Context, sysUser *request.SysU
 	return data, err
 }
 
-func (*SysUserService) GetSysUserById(ctx context.Context, roleId int64) (*system.SysUser, error) {
+func (*SysUserService) GetSysUserById(ctx context.Context, userId int64) (data *response.SysUser, err error) {
 	sysUserDao := sysdao.NewSysUserDao(ctx)
-	data, err := sysUserDao.SelectById(roleId)
+	sysUserRoleDao := sysdao.NewSysUserRoleDao(ctx)
+	roleIds, err := sysUserRoleDao.SelectByUserId(userId)
+	data, err = sysUserDao.SelectById(userId)
+	data.RoleIds = roleIds
 	if err != nil {
 		global.Logger.Error(err)
 		return data, err

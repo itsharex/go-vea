@@ -79,6 +79,9 @@ func (*SysProfileApi) UpdatePassword(ctx *gin.Context) {
 	if err != nil {
 		result.FailWithMessage("修改密码异常，请联系管理员", ctx)
 	} else {
+		// 更新缓存用户密码
+		loginUser.SysUserResp.SysUser.Password = params.NewPassword
+		framework.TokenSrv.SetLoginUser(loginUser)
 		result.Ok(ctx)
 	}
 }

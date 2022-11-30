@@ -47,7 +47,8 @@ type UserProfile struct {
 }
 
 type UserInfoById struct {
-	User    *system.SysUser   `json:"user"`    // 基本信息
+	User    *SysUser          `json:"user"`    // 基本信息
+	Dept    *system.SysDept   `json:"dept"`    // 部门信息
 	Roles   []*system.SysRole `json:"roles"`   // 角色信息
 	Posts   []*system.SysPost `json:"posts"`   // 角色信息
 	PostIds []int64           `json:"postIds"` // postIds

@@ -34,12 +34,10 @@ func (*SysUserApi) GetSysUser(ctx *gin.Context) {
 		return
 	}
 	var roles []*system.SysRole
-	var roleIds []int64
 	tmp, err := syssrv.SysRoleSrv.SelectRoleAll(ctx)
 	for _, role := range tmp {
 		if !role.IsAdmin(role.RoleID) {
 			roles = append(roles, role)
-			roleIds = append(roleIds, role.RoleID)
 		}
 	}
 	posts, err := syssrv.SysPostSrv.SelectPostAll(ctx)
@@ -47,7 +45,9 @@ func (*SysUserApi) GetSysUser(ctx *gin.Context) {
 		result.FailWithMessage(err.Error(), ctx)
 		return
 	}
+	// 角色选项
 	userInfo.Roles = roles
+	// 部门选项
 	userInfo.Posts = posts
 	if userId != -1 {
 		data, err := syssrv.SysUserSrv.GetSysUserById(ctx, int64(userId))
@@ -56,9 +56,12 @@ func (*SysUserApi) GetSysUser(ctx *gin.Context) {
 			return
 		} else {
 			postIds, _ := syssrv.SysPostSrv.SelectPostListByUserId(ctx, int64(userId))
+			// 用户信息
 			userInfo.User = data
+			// 已选择部门
 			userInfo.PostIds = postIds
-			userInfo.RoleIds = roleIds
+			// 已选择角色
+			userInfo.RoleIds = data.RoleIds
 		}
 	}
 	result.OkWithData(userInfo, ctx)

@@ -89,8 +89,13 @@ func (dao *SysUserDao) SelectUserByUsername(username string) (sysUser *system.Sy
 	return
 }
 
-func (dao *SysUserDao) SelectById(id int64) (sysUser *system.SysUser, err error) {
-	err = dao.DB.Model(&sysUser).Where("user_id=?", id).Find(&sysUser).Error
+func (dao *SysUserDao) SelectById(userId int64) (sysUser *response.SysUser, err error) {
+	err = dao.DB.Table("sys_user u").
+		Select("u.user_id, u.dept_id, u.nickname, u.username, u.email, u.avatar, u.phone_number,"+
+			" u.gender, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,"+
+			" d.dept_name, d.leader").
+		Joins("left join sys_dept d on u.dept_id = d.dept_id").
+		Where("u.user_id = ?", userId).Find(&sysUser).Error
 	return
 }
 
