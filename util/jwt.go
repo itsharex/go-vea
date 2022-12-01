@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 	"go-vea/configs"
 	"time"
 )
@@ -10,18 +10,17 @@ var jwtSecret = []byte(configs.AppConfig.JWT.Secret)
 
 type Claims struct {
 	LoginUserKey string `json:"loginUserKey"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 // GenerateToken 签发用户Token
 func GenerateToken(loginUserKey string) (string, error) {
-	nowTime := time.Now()
-	expireTime := nowTime.Add(30 * time.Minute)
 	claims := Claims{
 		LoginUserKey: loginUserKey,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(),
-			Issuer:    "gx",
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * time.Minute * time.Duration(1))), // 过期时间30分钟
+			IssuedAt:  jwt.NewNumericDate(time.Now()),                                          // 签发时间
+			NotBefore: jwt.NewNumericDate(time.Now()),                                          // 生效时间
 		},
 	}
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
