@@ -47,21 +47,20 @@ type EmailClaims struct {
 	Email         string `json:"email"`
 	Password      string `json:"password"`
 	OperationType uint   `json:"operation_type"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 // GenerateEmailToken 签发邮箱验证Token
 func GenerateEmailToken(userID, Operation uint, email, password string) (string, error) {
-	nowTime := time.Now()
-	expireTime := nowTime.Add(15 * time.Minute)
 	claims := EmailClaims{
 		UserID:        userID,
 		Email:         email,
 		Password:      password,
 		OperationType: Operation,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(),
-			Issuer:    "cmall",
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * time.Minute * time.Duration(1))), // 过期时间30分钟
+			IssuedAt:  jwt.NewNumericDate(time.Now()),                                          // 签发时间
+			NotBefore: jwt.NewNumericDate(time.Now()),                                          // 生效时间
 		},
 	}
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

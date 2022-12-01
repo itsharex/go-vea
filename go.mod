@@ -10,10 +10,10 @@ require (
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.13.0
-	golang.org/x/crypto v0.0.0-20221012134737-56aed061732a
-	gorm.io/driver/mysql v1.4.1
-	gorm.io/gen v0.3.17
-	gorm.io/gorm v1.24.0
+	golang.org/x/crypto v0.3.0
+	gorm.io/driver/mysql v1.4.4
+	gorm.io/gen v0.3.18
+	gorm.io/gorm v1.24.2
 )
 
 require (
@@ -46,16 +46,16 @@ require (
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/image v0.0.0-20220902085622-e7cb96979f69 // indirect
-	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/net v0.0.0-20221004154528-8021a29435af // indirect
-	golang.org/x/sys v0.0.0-20221013171732-95e765b1cc43 // indirect
-	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.12 // indirect
+	golang.org/x/mod v0.7.0 // indirect
+	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/tools v0.3.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.0.7 // indirect
-	gorm.io/hints v1.1.0 // indirect
+	gorm.io/hints v1.1.1 // indirect
 	gorm.io/plugin/dbresolver v1.3.0 // indirect
 )
