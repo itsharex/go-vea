@@ -469,6 +469,8 @@ function closeDialog() {
   dialog.value.visible =  false
   userFormRef.value?.resetFields()
   userFormRef.value?.clearValidate()
+  form.value.userId = undefined
+  form.value.username = undefined
 }
 /** 新增按钮操作 */
 function handleAdd() {
