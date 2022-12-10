@@ -46,6 +46,7 @@ import useUserStore from '@/store/modules/user'
 
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
 
 const loginForm = ref({
   username: 'admin',
@@ -67,9 +68,24 @@ const loading = ref(false)
 const captchaEnabled = ref(true)
 // 注册开关
 const register = ref(false)
-const redirect = ref(undefined)
+const redirect = ref<string>('')
 
 const loginFormRef = ref<ElForm>(null)
+
+watch(
+  route,
+  () => {
+    const query = route.query
+    if (query) {
+      console.log(query);
+
+      redirect.value = query.redirect as string
+    }
+  },
+  {
+    immediate: true
+  }
+)
 
 function handleLogin() {
   loginFormRef.value?.validate((valid:any) => {
