@@ -5,7 +5,7 @@
   <el-dialog :title="title" v-model="open" width="800px" append-to-body @opened="modalOpened" @close="closeDialog">
     <el-row>
       <el-col :xs="24" :md="12" :style="{ height: '350px' }">
-        <vue-cropper
+        <VueCropper
           ref="cropper"
           :img="options.img"
           :info="true"
@@ -29,22 +29,21 @@
       <el-col :lg="2" :md="2">
         <el-upload action="#" :http-request="requestUpload" :show-file-list="false" :before-upload="beforeUpload">
           <el-button>
-            选择
-            <el-icon class="el-icon--right"><Upload /></el-icon>
+            选择<ep:upload />
           </el-button>
         </el-upload>
       </el-col>
       <el-col :lg="{ span: 1, offset: 2 }" :md="2">
-        <el-button icon="Plus" @click="changeScale(1)"></el-button>
+        <el-button @click="changeScale(1)"><ep:plus /></el-button>
       </el-col>
       <el-col :lg="{ span: 1, offset: 1 }" :md="2">
-        <el-button icon="Minus" @click="changeScale(-1)"></el-button>
+        <el-button @click="changeScale(-1)"><ep:minus /></el-button>
       </el-col>
       <el-col :lg="{ span: 1, offset: 1 }" :md="2">
-        <el-button icon="RefreshLeft" @click="rotateLeft()"></el-button>
+        <el-button @click="rotateLeft()"><ep:refreshLeft /></el-button>
       </el-col>
       <el-col :lg="{ span: 1, offset: 1 }" :md="2">
-        <el-button icon="RefreshRight" @click="rotateRight()"></el-button>
+        <el-button @click="rotateRight()"><ep:refreshRight /></el-button>
       </el-col>
       <el-col :lg="{ span: 2, offset: 6 }" :md="2">
         <el-button type="primary" @click="uploadImg()">提 交</el-button>
@@ -54,13 +53,14 @@
 </template>
 
 <script lang="ts" setup>
-// import 'vue-cropper/dist/index.css'
-import { VueCropper } from 'vue-cropper'
+import VueCropper from 'vue-cropper'
+import 'vue-cropper/dist/index.css'
 import { uploadAvatar } from '@/api/system/user'
 import useUserStore from '@/store/modules/user'
+import useCurrentInstance from '@/hooks/useCurrentInstance'
 
 const userStore = useUserStore()
-const { proxy } = getCurrentInstance()
+const { proxy } = useCurrentInstance()
 
 const open = ref(false)
 const visible = ref(false)
