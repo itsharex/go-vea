@@ -3,7 +3,7 @@ package systemctl
 import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/common/result"
-	"go-vea/app/framework"
+	"go-vea/app/core"
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/app/model/system/response"
@@ -16,7 +16,7 @@ type SysMenuApi struct{}
 func (*SysMenuApi) GetMenuList(ctx *gin.Context) {
 	var params request.SysMenu
 	_ = ctx.ShouldBindJSON(&params)
-	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, err := core.TokenSrv.GetLoginUser(ctx)
 	data, err := syssrv.SysMenuSrv.SelectMenuList(ctx.Request.Context(), &params, loginUser.UserID)
 	if err != nil {
 		result.FailWithMessage(err.Error(), ctx)
@@ -28,7 +28,7 @@ func (*SysMenuApi) GetMenuList(ctx *gin.Context) {
 func (*SysMenuApi) GetMenuTreeList(ctx *gin.Context) {
 	var params request.SysMenu
 	_ = ctx.ShouldBindJSON(&params)
-	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, err := core.TokenSrv.GetLoginUser(ctx)
 	data, err := syssrv.SysMenuSrv.GetTreeSelect(ctx.Request.Context(), &params, loginUser.UserID)
 	if err != nil {
 		result.FailWithMessage(err.Error(), ctx)
@@ -82,7 +82,7 @@ func (*SysMenuApi) DeleteSysMenu(ctx *gin.Context) {
 func (*SysMenuApi) TreeSelect(ctx *gin.Context) {
 	var params request.SysMenu
 	_ = ctx.ShouldBindJSON(&params)
-	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, err := core.TokenSrv.GetLoginUser(ctx)
 	data, err := syssrv.SysMenuSrv.GetTreeSelect(ctx.Request.Context(), &params, loginUser.UserID)
 	if err != nil {
 		result.FailWithMessage(err.Error(), ctx)
@@ -94,7 +94,7 @@ func (*SysMenuApi) TreeSelect(ctx *gin.Context) {
 func (*SysMenuApi) RoleMenuTreeSelect(ctx *gin.Context) {
 	var params request.SysMenu
 	_ = ctx.ShouldBindJSON(&params)
-	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, err := core.TokenSrv.GetLoginUser(ctx)
 	menus, err := syssrv.SysMenuSrv.GetTreeSelect(ctx.Request.Context(), &params, loginUser.UserID)
 
 	checkedKeys, err := syssrv.SysMenuSrv.SelectMenuListByRoleId(ctx, params.RoleId)

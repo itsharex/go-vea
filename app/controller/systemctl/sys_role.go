@@ -3,7 +3,7 @@ package systemctl
 import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/common/result"
-	"go-vea/app/framework"
+	"go-vea/app/core"
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/app/model/system/response"
@@ -54,14 +54,14 @@ func (*SysRoleApi) UpdateSysRole(ctx *gin.Context) {
 		result.FailWithMessage(err.Error(), ctx)
 	} else {
 		// 更新缓存用户权限
-		loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
+		loginUser, _ := core.TokenSrv.GetLoginUser(ctx)
 		sysUser := loginUser.SysUserResp.SysUser
 		if sysUser != nil && !sysUser.IsAdmin(sysUser.UserID) {
-			perms, _ := framework.SysPermissionSrv.GetMenuPermission(ctx, loginUser.SysUserResp)
+			perms, _ := core.SysPermissionSrv.GetMenuPermission(ctx, loginUser.SysUserResp)
 			userInfo, _ := syssrv.SysUserSrv.SelectUserByUsername(ctx, sysUser.Username)
 			loginUser.Permissions = perms
 			loginUser.SysUserResp.SysUser = userInfo
-			framework.TokenSrv.SetLoginUser(loginUser)
+			core.TokenSrv.SetLoginUser(loginUser)
 		}
 		result.Ok(ctx)
 	}
@@ -81,11 +81,11 @@ func (*SysRoleApi) DeleteSysRole(ctx *gin.Context) {
 func (*SysRoleApi) DataScope(ctx *gin.Context) {
 	var params system.SysRole
 	_ = ctx.ShouldBindJSON(&params)
-	if !framework.CheckSrv.CheckRoleAllowed(ctx, &params) {
+	if !core.CheckSrv.CheckRoleAllowed(ctx, &params) {
 		result.FailWithMessage("不允许操作超级管理员用户", ctx)
 		return
 	}
-	if !framework.CheckSrv.CheckRoleDataScope(ctx, params.RoleID) {
+	if !core.CheckSrv.CheckRoleDataScope(ctx, params.RoleID) {
 		result.FailWithMessage("没有权限访问角色数据", ctx)
 		return
 	}
@@ -100,11 +100,11 @@ func (*SysRoleApi) DataScope(ctx *gin.Context) {
 func (*SysRoleApi) ChangeStatus(ctx *gin.Context) {
 	var params system.SysRole
 	_ = ctx.ShouldBindJSON(&params)
-	if !framework.CheckSrv.CheckRoleAllowed(ctx, &params) {
+	if !core.CheckSrv.CheckRoleAllowed(ctx, &params) {
 		result.FailWithMessage("不允许操作超级管理员用户", ctx)
 		return
 	}
-	if !framework.CheckSrv.CheckRoleDataScope(ctx, params.RoleID) {
+	if !core.CheckSrv.CheckRoleDataScope(ctx, params.RoleID) {
 		result.FailWithMessage("没有权限访问角色数据", ctx)
 		return
 	}
@@ -174,7 +174,7 @@ func (*SysRoleApi) CancelAuthUserAll(ctx *gin.Context) {
 func (*SysRoleApi) SelectAuthUserAll(ctx *gin.Context) {
 	var params request.SysUserRole
 	_ = ctx.ShouldBindJSON(&params)
-	if !framework.CheckSrv.CheckRoleDataScope(ctx, params.RoleID) {
+	if !core.CheckSrv.CheckRoleDataScope(ctx, params.RoleID) {
 		result.FailWithMessage("没有权限访问角色数据", ctx)
 		return
 	}

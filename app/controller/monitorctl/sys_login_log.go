@@ -3,7 +3,7 @@ package monitorctl
 import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/common/result"
-	"go-vea/app/framework"
+	"go-vea/app/core"
 	"go-vea/app/model/monitor"
 	"go-vea/app/model/monitor/request"
 	"go-vea/app/service/monitorsrv"
@@ -77,7 +77,7 @@ func (*SysLoginLog) CleanLoginLog(ctx *gin.Context) {
 }
 
 func (*SysLoginLog) Unlock(ctx *gin.Context) {
-	framework.SysPasswordSrv.ClearLoginRecordCache(ctx.Param("username"))
+	core.SysPasswordSrv.ClearLoginRecordCache(ctx.Param("username"))
 	//if err != nil {
 	//	result.FailWithMessage(err.Error(), ctx)
 	//} else {

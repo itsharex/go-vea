@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const MySQLDSN = "root:mysql123456@(localhost:3306)/go-gin?charset=utf8mb4&parseTime=True&loc=Local"
+const MySQLDSN = "root:mysql123456@(localhost:3306)/go-blog?charset=utf8mb4&parseTime=True&loc=Local"
 
 func main() {
 

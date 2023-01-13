@@ -3,7 +3,7 @@ package systemctl
 import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/common/result"
-	"go-vea/app/framework"
+	"go-vea/app/core"
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/app/service/syssrv"
@@ -49,7 +49,7 @@ func (*SysDeptApi) ExcludeChild(ctx *gin.Context) {
 
 func (*SysDeptApi) GetSysDept(ctx *gin.Context) {
 	deptId, _ := strconv.Atoi(ctx.Param("deptId"))
-	if !framework.CheckSrv.CheckDeptDataScope(ctx, int64(deptId)) {
+	if !core.CheckSrv.CheckDeptDataScope(ctx, int64(deptId)) {
 		result.FailWithMessage("没有权限访问部门数据", ctx)
 		return
 	}
@@ -75,7 +75,7 @@ func (*SysDeptApi) AddSysDept(ctx *gin.Context) {
 func (*SysDeptApi) UpdateSysDept(ctx *gin.Context) {
 	var params system.SysDept
 	_ = ctx.ShouldBindJSON(&params)
-	if !framework.CheckSrv.CheckDeptDataScope(ctx, params.DeptID) {
+	if !core.CheckSrv.CheckDeptDataScope(ctx, params.DeptID) {
 		result.FailWithMessage("没有权限访问部门数据", ctx)
 		return
 	}

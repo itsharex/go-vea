@@ -3,7 +3,7 @@ package systemctl
 import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/common/result"
-	"go-vea/app/framework"
+	"go-vea/app/core"
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/app/model/system/response"
@@ -29,7 +29,7 @@ func (*SysUserApi) GetSysUserList(ctx *gin.Context) {
 func (*SysUserApi) GetSysUser(ctx *gin.Context) {
 	userId, _ := strconv.Atoi(ctx.Param("userId"))
 	userInfo := &response.UserInfoById{}
-	if !framework.CheckSrv.CheckUserDataScope(ctx, int64(userId)) {
+	if !core.CheckSrv.CheckUserDataScope(ctx, int64(userId)) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}
@@ -93,11 +93,11 @@ func (*SysUserApi) UpdateSysUser(ctx *gin.Context) {
 	var params request.AddSysUser
 	_ = ctx.ShouldBindJSON(&params)
 	sysUser := params.SysUser
-	if !framework.CheckSrv.CheckUserAllowed(ctx, sysUser) {
+	if !core.CheckSrv.CheckUserAllowed(ctx, sysUser) {
 		result.FailWithMessage("不允许操作超级管理员用户", ctx)
 		return
 	}
-	if !framework.CheckSrv.CheckUserDataScope(ctx, sysUser.UserID) {
+	if !core.CheckSrv.CheckUserDataScope(ctx, sysUser.UserID) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}
@@ -122,7 +122,7 @@ func (*SysUserApi) UpdateSysUser(ctx *gin.Context) {
 func (*SysUserApi) DeleteSysUser(ctx *gin.Context) {
 	var params request.SysUser
 	_ = ctx.ShouldBindJSON(&params)
-	loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, _ := core.TokenSrv.GetLoginUser(ctx)
 	var hasCurrentUserId bool
 	for _, id := range params.Ids {
 		if id == loginUser.UserID {
@@ -145,15 +145,15 @@ func (*SysUserApi) DeleteSysUser(ctx *gin.Context) {
 func (*SysUserApi) ResetPwd(ctx *gin.Context) {
 	var params system.SysUser
 	_ = ctx.ShouldBindJSON(&params)
-	if !framework.CheckSrv.CheckUserAllowed(ctx, &params) {
+	if !core.CheckSrv.CheckUserAllowed(ctx, &params) {
 		result.FailWithMessage("不允许操作超级管理员用户", ctx)
 		return
 	}
-	if !framework.CheckSrv.CheckUserDataScope(ctx, params.UserID) {
+	if !core.CheckSrv.CheckUserDataScope(ctx, params.UserID) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}
-	loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, _ := core.TokenSrv.GetLoginUser(ctx)
 	params.UpdateBy = loginUser.SysUserResp.SysUser.Username
 	params.Password, _ = util.PasswordHash(params.Password)
 	err := syssrv.SysUserSrv.ResetPwd(ctx, &params)
@@ -167,15 +167,15 @@ func (*SysUserApi) ResetPwd(ctx *gin.Context) {
 func (*SysUserApi) ChangeStatus(ctx *gin.Context) {
 	var params system.SysUser
 	_ = ctx.ShouldBindJSON(&params)
-	if !framework.CheckSrv.CheckUserAllowed(ctx, &params) {
+	if !core.CheckSrv.CheckUserAllowed(ctx, &params) {
 		result.FailWithMessage("不允许操作超级管理员用户", ctx)
 		return
 	}
-	if !framework.CheckSrv.CheckUserDataScope(ctx, params.UserID) {
+	if !core.CheckSrv.CheckUserDataScope(ctx, params.UserID) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}
-	loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, _ := core.TokenSrv.GetLoginUser(ctx)
 	params.UpdateBy = loginUser.SysUserResp.SysUser.Username
 	err := syssrv.SysUserSrv.UpdateUserStatus(ctx, &params)
 	if err != nil {
@@ -214,7 +214,7 @@ func (*SysUserApi) AuthRole(ctx *gin.Context) {
 func (*SysUserApi) InsertAuthRole(ctx *gin.Context) {
 	var params request.AddUserRole
 	_ = ctx.ShouldBindJSON(&params)
-	if !framework.CheckSrv.CheckUserDataScope(ctx, params.UserId) {
+	if !core.CheckSrv.CheckUserDataScope(ctx, params.UserId) {
 		result.FailWithMessage("没有权限访问用户数据", ctx)
 		return
 	}

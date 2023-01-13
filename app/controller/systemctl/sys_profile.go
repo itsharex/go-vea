@@ -3,7 +3,7 @@ package systemctl
 import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/common/result"
-	"go-vea/app/framework"
+	"go-vea/app/core"
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/app/model/system/response"
@@ -14,7 +14,7 @@ import (
 type SysProfileApi struct{}
 
 func (*SysProfileApi) GetProfile(ctx *gin.Context) {
-	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, err := core.TokenSrv.GetLoginUser(ctx)
 	if err != nil {
 		result.FailWithMessage(err.Error(), ctx)
 	} else {
@@ -33,7 +33,7 @@ func (*SysProfileApi) GetProfile(ctx *gin.Context) {
 func (*SysProfileApi) UpdateProfile(ctx *gin.Context) {
 	var params system.SysUser
 	_ = ctx.ShouldBindJSON(&params)
-	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, err := core.TokenSrv.GetLoginUser(ctx)
 	phoneNumberUnique := syssrv.SysUserSrv.CheckPhoneUnique(ctx, &params)
 	if params.PhoneNumber != "" && !phoneNumberUnique {
 		result.FailWithMessage("修改用户'"+params.Username+"'失败，手机号码已存在", ctx)
@@ -54,7 +54,7 @@ func (*SysProfileApi) UpdateProfile(ctx *gin.Context) {
 		loginUser.SysUserResp.SysUser.PhoneNumber = params.PhoneNumber
 		loginUser.SysUserResp.SysUser.Email = params.Email
 		loginUser.SysUserResp.SysUser.Gender = params.Gender
-		framework.TokenSrv.SetLoginUser(loginUser)
+		core.TokenSrv.SetLoginUser(loginUser)
 		result.Ok(ctx)
 	}
 }
@@ -62,7 +62,7 @@ func (*SysProfileApi) UpdateProfile(ctx *gin.Context) {
 func (*SysProfileApi) UpdatePassword(ctx *gin.Context) {
 	var params request.ResetPwd
 	_ = ctx.ShouldBindJSON(&params)
-	loginUser, err := framework.TokenSrv.GetLoginUser(ctx)
+	loginUser, err := core.TokenSrv.GetLoginUser(ctx)
 	username := loginUser.SysUserResp.SysUser.Username
 	hashPassword := loginUser.SysUserResp.SysUser.Password
 	params.Username = username
@@ -81,7 +81,7 @@ func (*SysProfileApi) UpdatePassword(ctx *gin.Context) {
 	} else {
 		// 更新缓存用户密码
 		loginUser.SysUserResp.SysUser.Password = params.NewPassword
-		framework.TokenSrv.SetLoginUser(loginUser)
+		core.TokenSrv.SetLoginUser(loginUser)
 		result.Ok(ctx)
 	}
 }

@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/common/result"
-	"go-vea/app/framework"
+	"go-vea/app/core"
 	"go-vea/global"
 )
 
@@ -11,7 +11,7 @@ import (
 func HasPerm(perms string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		loginUser, err := framework.TokenSrv.GetLoginUser(c)
+		loginUser, err := core.TokenSrv.GetLoginUser(c)
 
 		if err != nil {
 			global.Logger.Error(err)
@@ -36,7 +36,7 @@ func HasRole(role string) gin.HandlerFunc {
 			return
 		}
 
-		loginUser, _ := framework.TokenSrv.GetLoginUser(c)
+		loginUser, _ := core.TokenSrv.GetLoginUser(c)
 
 		if loginUser == nil || len(loginUser.SysUserResp.Roles) < 0 {
 			global.Logger.Warn("没有权限")

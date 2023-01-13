@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-vea/app/common/e"
 	"go-vea/app/common/result"
-	"go-vea/app/framework"
+	"go-vea/app/core"
 	"go-vea/configs"
 	"go-vea/global"
 	"go-vea/util"
@@ -30,10 +30,10 @@ func JWT() gin.HandlerFunc {
 				//}
 
 				// 这里以redis key的过期时间为准 可刷新
-				loginUser, _ := framework.TokenSrv.GetLoginUser(ctx)
+				loginUser, _ := core.TokenSrv.GetLoginUser(ctx)
 				if loginUser != nil {
 					global.Logger.Info("jwt过期时间: ", claims.ExpiresAt)
-					framework.TokenSrv.VerifyToken(loginUser)
+					core.TokenSrv.VerifyToken(loginUser)
 				} else {
 					code = e.FORBIDDEN
 				}
