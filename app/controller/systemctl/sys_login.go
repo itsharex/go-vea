@@ -38,7 +38,7 @@ func (s *SysLoginApi) Logout(ctx *gin.Context) {
 func (s *SysLoginApi) GetUserInfo(ctx *gin.Context) {
 	loginUser, err := core.TokenSrv.GetLoginUser(ctx)
 	if err != nil {
-		result.FailWithMessage(err.Error(), ctx)
+		result.Unauthorized(ctx)
 	} else {
 		roles, _ := syssrv.SysRoleSrv.GetRolePermission(ctx, loginUser.SysUserResp.SysUser)
 		userInfo := &response.UserInfo{

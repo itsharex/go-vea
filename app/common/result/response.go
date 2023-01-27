@@ -50,5 +50,9 @@ func FailWithDetailed(data interface{}, message string, c *gin.Context) {
 }
 
 func Forbidden(c *gin.Context) {
-	Result(e.FORBIDDEN, map[string]interface{}{}, "当前操作没有权限", c)
+	Result(e.FORBIDDEN, map[string]interface{}{}, e.GetMsg(e.FORBIDDEN), c)
+}
+
+func Unauthorized(c *gin.Context) {
+	Result(e.UNAUTHORIZED, map[string]interface{}{}, e.GetMsg(e.UNAUTHORIZED), c)
 }
