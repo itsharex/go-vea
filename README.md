@@ -81,7 +81,7 @@ git clone https://github.com/aguoxing/go-vea.git
 cd go-vea
 
 # 安装go依赖
-go mod tidy
+go mod download
 
 # 运行后台
 go run main.go
