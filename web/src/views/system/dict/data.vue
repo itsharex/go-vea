@@ -155,7 +155,7 @@ const data = reactive({
   form: {
     listClass: 'default',
     dictSort: 0,
-    status: '0',
+    status: '0'
   } as DictDataFormData,
   queryParams: {
     pageNum: 1,
@@ -227,8 +227,8 @@ function handleAdd() {
   form.value.dictType = queryParams.value.dictType
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection:any) {
-  ids.value = selection.map((item:any) => item.dictCode)
+function handleSelectionChange(selection: any) {
+  ids.value = selection.map((item: any) => item.dictCode)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
@@ -245,7 +245,7 @@ function handleUpdate(row: { [key: string]: any }) {
 }
 /** 提交按钮 */
 function submitForm() {
-  dictDataFormRef.value.validate((valid:any) => {
+  dictDataFormRef.value.validate((valid: any) => {
     if (valid) {
       if (form.value.dictCode != undefined) {
         updateData(form.value).then(() => {
@@ -276,7 +276,7 @@ function handleDelete(row: { [key: string]: any }) {
   proxy.$modal
     .confirm('是否确认删除字典编码为"' + dictCodes + '"的数据项？')
     .then(function () {
-      return delData({ids: dictCodes})
+      return delData({ ids: dictCodes })
     })
     .then(() => {
       getList()

@@ -197,8 +197,8 @@ function resetQuery() {
   proxy.$refs['operlogTableRef'].sort(defaultSort.value.prop, defaultSort.value.order)
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection:any) {
-  ids.value = selection.map((item:any) => item.operId)
+function handleSelectionChange(selection: any) {
+  ids.value = selection.map((item: any) => item.operId)
   multiple.value = !selection.length
 }
 /** 排序触发事件 */

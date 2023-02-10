@@ -48,7 +48,7 @@ const rules = ref({
 
 /** 提交按钮 */
 function submit() {
-  proxy.$refs.userRef.validate((valid:any) => {
+  proxy.$refs.userRef.validate((valid: any) => {
     if (valid) {
       updateUserProfile(props.user).then(() => {
         proxy.$modal.msgSuccess('修改成功')

@@ -90,7 +90,7 @@ const captchaEnabled = ref(true)
 
 function handleRegister() {
   // proxy.$refs.registerFormRef.validate((valid:any) => {
-  registerFormRef.value?.validate((valid:any) => {
+  registerFormRef.value?.validate((valid: any) => {
     if (valid) {
       loading.value = true
       register(registerForm.value)

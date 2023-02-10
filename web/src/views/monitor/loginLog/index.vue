@@ -138,11 +138,11 @@ function resetQuery() {
   loginLogTableRef.value.sort(defaultSort.value.prop, defaultSort.value.order)
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection:any) {
-  ids.value = selection.map((item:any) => item.infoId)
+function handleSelectionChange(selection: any) {
+  ids.value = selection.map((item: any) => item.infoId)
   multiple.value = !selection.length
   single.value = selection.length != 1
-  selectName.value = selection.map((item:any) => item.username)
+  selectName.value = selection.map((item: any) => item.username)
 }
 /** 排序触发事件 */
 function handleSortChange(column, prop, order) {

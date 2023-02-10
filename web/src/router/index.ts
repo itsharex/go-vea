@@ -79,7 +79,7 @@ export const dynamicRoutes = [
   {
     path: '/system/user-auth',
     component: Layout,
-    meta: {hidden: true},
+    meta: { hidden: true },
     permissions: ['system:user:edit'],
     children: [
       {
@@ -93,7 +93,7 @@ export const dynamicRoutes = [
   {
     path: '/system/role-auth',
     component: Layout,
-    meta: {hidden: true},
+    meta: { hidden: true },
     permissions: ['system:role:edit'],
     children: [
       {
@@ -107,7 +107,7 @@ export const dynamicRoutes = [
   {
     path: '/system/dict-data',
     component: Layout,
-    meta: {hidden: true},
+    meta: { hidden: true },
     permissions: ['system:dict:list'],
     children: [
       {
@@ -121,7 +121,7 @@ export const dynamicRoutes = [
   {
     path: '/monitor/job-log',
     component: Layout,
-    meta: {hidden: true},
+    meta: { hidden: true },
     permissions: ['monitor:job:list'],
     children: [
       {
@@ -135,7 +135,7 @@ export const dynamicRoutes = [
   {
     path: '/tool/gen-edit',
     component: Layout,
-    meta: {hidden: true},
+    meta: { hidden: true },
     permissions: ['tool:gen:edit'],
     children: [
       {

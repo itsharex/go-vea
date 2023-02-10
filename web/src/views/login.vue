@@ -77,7 +77,7 @@ watch(
   () => {
     const query = route.query
     if (query) {
-      console.log(query);
+      console.log(query)
 
       redirect.value = query.redirect as string
     }
@@ -88,7 +88,7 @@ watch(
 )
 
 function handleLogin() {
-  loginFormRef.value?.validate((valid:any) => {
+  loginFormRef.value?.validate((valid: any) => {
     if (valid) {
       loading.value = true
       // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码

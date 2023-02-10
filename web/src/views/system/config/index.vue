@@ -122,7 +122,7 @@ const data = reactive({
   } as Dialog,
   form: {
     configType: 'Y'
-  } as  ConfigFormData,
+  } as ConfigFormData,
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -167,8 +167,8 @@ function resetQuery() {
   handleQuery()
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection:any) {
-  ids.value = selection.map((item:any) => item.configId)
+function handleSelectionChange(selection: any) {
+  ids.value = selection.map((item: any) => item.configId)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
@@ -190,7 +190,7 @@ function handleUpdate(row: { [key: string]: any }) {
 }
 /** 提交按钮 */
 function submitForm() {
-  configFormRef.value.validate((valid:any) => {
+  configFormRef.value.validate((valid: any) => {
     if (valid) {
       if (form.value.configId != undefined) {
         updateConfig(form.value).then(() => {

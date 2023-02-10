@@ -163,6 +163,13 @@ func InitRouter() {
 	// jwt 认证
 	monitorRoutes.Use(middleware.JWT())
 
+	// 系统信息
+	serverInfoRouters := monitorRoutes.Group("server")
+	serverApi := monitorctl.ServerInfoApi{}
+	{
+		serverInfoRouters.GET("info", serverApi.GetServerInfo)
+	}
+
 	// 登录日志
 	loginLogRoutes := monitorRoutes.Group("loginLog")
 	loginLogApi := monitorctl.SysLoginLog{}

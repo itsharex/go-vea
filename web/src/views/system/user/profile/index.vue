@@ -87,5 +87,4 @@ const getUser = () => {
 onMounted(() => {
   getUser()
 })
-
 </script>

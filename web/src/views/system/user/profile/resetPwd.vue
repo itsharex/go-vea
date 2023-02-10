@@ -48,9 +48,9 @@ const rules = ref({
 
 /** 提交按钮 */
 function submit() {
-  proxy.$refs.pwdRef.validate((valid:any) => {
+  proxy.$refs.pwdRef.validate((valid: any) => {
     if (valid) {
-      updateUserPwd({oldPassword: user.oldPassword, newPassword: user.newPassword}).then(() => {
+      updateUserPwd({ oldPassword: user.oldPassword, newPassword: user.newPassword }).then(() => {
         proxy.$modal.msgSuccess('修改成功')
       })
     }

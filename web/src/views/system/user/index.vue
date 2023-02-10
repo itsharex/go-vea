@@ -312,7 +312,7 @@ const queryFormRef = ref<ElForm>(null) // 查询表单
 const userFormRef = ref<ElForm>(null) // 用户表单
 
 /** 通过条件过滤节点  */
-const filterNode = (value: string, data:any) => {
+const filterNode = (value: string, data: any) => {
   if (!value) return true
   return data.deptName.indexOf(value) !== -1
 }
@@ -364,7 +364,7 @@ function handleDelete(row: { [key: string]: any }) {
   proxy.$modal
     .confirm('是否确认删除用户编号为"' + userIds + '"的数据项？')
     .then(function () {
-      return delUser({ids: userIds})
+      return delUser({ ids: userIds })
     })
     .then(() => {
       getList()
@@ -418,14 +418,14 @@ function handleAuthRole(row: { [key: string]: any }) {
 /** 重置密码按钮操作 */
 function handleResetPwd(row: { [key: string]: any }) {
   ElMessageBox.prompt('请输入"' + row.username + '"的新密码', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      closeOnClickModal: false,
-      inputPattern: /^.{5,20}$/,
-      inputErrorMessage: '用户密码长度必须介于 5 和 20 之间'
-    })
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    inputPattern: /^.{5,20}$/,
+    inputErrorMessage: '用户密码长度必须介于 5 和 20 之间'
+  })
     .then(({ value }) => {
-      resetUserPwd({userId: row.userId, password: value}).then(() => {
+      resetUserPwd({ userId: row.userId, password: value }).then(() => {
         proxy.$modal.msgSuccess('修改成功，新密码是：' + value)
       })
     })
@@ -466,7 +466,7 @@ function submitFileForm() {
 }
 /** 关闭用户弹窗 */
 function closeDialog() {
-  dialog.value.visible =  false
+  dialog.value.visible = false
   userFormRef.value?.resetFields()
   userFormRef.value?.clearValidate()
   form.value.userId = undefined
@@ -474,7 +474,7 @@ function closeDialog() {
 }
 /** 新增按钮操作 */
 function handleAdd() {
-  getUser("-1").then(response => {
+  getUser('-1').then(response => {
     postOptions.value = response.data.posts
     roleOptions.value = response.data.roles
     dialog.value.visible = true

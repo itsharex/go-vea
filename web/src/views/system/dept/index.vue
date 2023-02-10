@@ -171,7 +171,7 @@ function getList() {
 }
 /** 关闭弹窗 */
 function closeDialog() {
-  dialog.value.visible =  false
+  dialog.value.visible = false
   deptFormRef.value?.resetFields()
   deptFormRef.value?.clearValidate()
   form.value.deptId = undefined
@@ -206,7 +206,7 @@ function toggleExpandAll() {
 }
 /** 修改按钮操作 */
 function handleUpdate(row: { [key: string]: any }) {
-  listDeptExcludeChild({ExcludeDeptId: row.deptId}).then(response => {
+  listDeptExcludeChild({ ExcludeDeptId: row.deptId }).then(response => {
     deptOptions.value = response.data
   })
   getDept(row.deptId).then(response => {
@@ -220,7 +220,7 @@ function handleUpdate(row: { [key: string]: any }) {
 }
 /** 提交按钮 */
 function submitForm() {
-  deptFormRef.value.validate((valid:any) => {
+  deptFormRef.value.validate((valid: any) => {
     if (valid) {
       if (form.value.deptId != undefined) {
         updateDept(form.value).then(() => {
@@ -252,7 +252,7 @@ function handleDelete(row: { [key: string]: any }) {
     .catch(() => {})
 }
 
-onMounted(() =>{
+onMounted(() => {
   getList()
 })
 </script>

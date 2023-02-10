@@ -115,7 +115,7 @@ const data = reactive({
   } as Dialog,
   form: {
     postSort: 0,
-    status: '0',
+    status: '0'
   } as PostFormData,
   queryParams: {
     pageNum: 1,
@@ -160,8 +160,8 @@ function resetQuery() {
   handleQuery()
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection:any) {
-  ids.value = selection.map((item:any) => item.postId)
+function handleSelectionChange(selection: any) {
+  ids.value = selection.map((item: any) => item.postId)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
@@ -183,7 +183,7 @@ function handleUpdate(row: { [key: string]: any }) {
 }
 /** 提交按钮 */
 function submitForm() {
-  postFormRef.value.validate((valid:any) => {
+  postFormRef.value.validate((valid: any) => {
     if (valid) {
       if (form.value.postId != undefined) {
         updatePost(form.value).then(() => {

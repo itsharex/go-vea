@@ -15,9 +15,7 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain @click="openSelectUser" v-hasPerms="['system:role:add']">
-          <ep:plus />添加用户
-        </el-button>
+        <el-button type="primary" plain @click="openSelectUser" v-hasPerms="['system:role:add']"> <ep:plus />添加用户 </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain :disabled="multiple" @click="cancelAuthUserAll" v-hasPerms="['system:role:remove']">
@@ -25,9 +23,7 @@
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain @click="handleClose">
-          <ep:close /> 关闭
-        </el-button>
+        <el-button type="warning" plain @click="handleClose"> <ep:close /> 关闭 </el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -50,9 +46,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link @click="cancelAuthUser(scope.row)" v-hasPerms="['system:role:remove']">
-            <ep:circleClose /> 取消授权
-          </el-button>
+          <el-button link @click="cancelAuthUser(scope.row)" v-hasPerms="['system:role:remove']"> <ep:circleClose /> 取消授权 </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,8 +108,8 @@ function resetQuery() {
   handleQuery()
 }
 // 多选框选中数据
-function handleSelectionChange(selection:any) {
-  userIds.value = selection.map((item:any) => item.userId)
+function handleSelectionChange(selection: any) {
+  userIds.value = selection.map((item: any) => item.userId)
   multiple.value = !selection.length
 }
 /** 打开授权用户表弹窗 */

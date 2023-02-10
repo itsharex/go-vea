@@ -123,8 +123,8 @@
                 </span>
               </template>
               <el-radio-group v-model="form.isFrame">
-                <el-radio :label=0>是</el-radio>
-                <el-radio :label=1>否</el-radio>
+                <el-radio :label="0">是</el-radio>
+                <el-radio :label="1">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -191,8 +191,8 @@
                 </span>
               </template>
               <el-radio-group v-model="form.isCache">
-                <el-radio :label=0>缓存</el-radio>
-                <el-radio :label=1>不缓存</el-radio>
+                <el-radio :label="0">缓存</el-radio>
+                <el-radio :label="1">不缓存</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -241,7 +241,7 @@
 <script lang="ts" setup name="Menu">
 import { addMenu, delMenu, getMenu, listMenuTree, updateMenu } from '@/api/system/menu'
 import { ClickOutside as vClickOutside } from 'element-plus'
-import { MenuFormData,MenuOptions } from '@/types/api/menu'
+import { MenuFormData, MenuOptions } from '@/types/api/menu'
 import useCurrentInstance from '@/hooks/useCurrentInstance'
 import { Dialog } from '@/types/common'
 
@@ -305,7 +305,7 @@ function getTreeSelect() {
   })
 }
 function closeDialog() {
-  dialog.value.visible =  false
+  dialog.value.visible = false
   menuFormRef.value?.resetFields()
   menuFormRef.value?.clearValidate()
   form.value.menuId = undefined
@@ -316,7 +316,7 @@ function showSelectIcon() {
   showChooseIcon.value = true
 }
 /** 选择图标 */
-function selected(name:string) {
+function selected(name: string) {
   form.value.icon = name
   showChooseIcon.value = false
 }
@@ -369,7 +369,7 @@ async function handleUpdate(row: { [key: string]: any }) {
 }
 /** 提交按钮 */
 function submitForm() {
-  menuFormRef.value.validate((valid:any) => {
+  menuFormRef.value.validate((valid: any) => {
     if (valid) {
       if (form.value.menuId != undefined) {
         updateMenu(form.value).then(() => {

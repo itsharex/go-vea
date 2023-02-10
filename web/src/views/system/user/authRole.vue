@@ -58,7 +58,7 @@ import useCurrentInstance from '@/hooks/useCurrentInstance'
 
 const route = useRoute()
 const { proxy } = useCurrentInstance()
-const roleTableRef = ref<InstanceType<typeof ElTable>>();
+const roleTableRef = ref<InstanceType<typeof ElTable>>()
 
 const loading = ref(true)
 const total = ref(0)
@@ -77,8 +77,8 @@ function clickRow(row: { [key: string]: any }) {
   roleTableRef.value.toggleRowSelection(row)
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection:any) {
-  roleIds.value = selection.map((item:any) => item.roleId)
+function handleSelectionChange(selection: any) {
+  roleIds.value = selection.map((item: any) => item.roleId)
 }
 /** 保存选中的数据编号 */
 function getRowKey(row: { [key: string]: any }) {
@@ -108,7 +108,7 @@ onMounted(() => {
     loading.value = true
     getAuthRole(userId).then(response => {
       form.value = response.data.user
-      roles.value =  response.data.roles
+      roles.value = response.data.roles
       total.value = roles.value.length
       nextTick(() => {
         roles.value.forEach(row => {
@@ -121,5 +121,4 @@ onMounted(() => {
     })
   }
 })
-
 </script>

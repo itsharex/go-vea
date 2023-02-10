@@ -132,7 +132,7 @@ const data = reactive({
     title: ''
   } as Dialog,
   form: {
-    status: '0',
+    status: '0'
   } as DictTypeFormData,
   queryParams: {
     pageNum: 1,
@@ -182,8 +182,8 @@ function handleAdd() {
   dialog.value.title = '添加字典类型'
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection:any) {
-  ids.value = selection.map((item:any) => item.dictId)
+function handleSelectionChange(selection: any) {
+  ids.value = selection.map((item: any) => item.dictId)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
@@ -200,7 +200,7 @@ function handleUpdate(row: { [key: string]: any }) {
 }
 /** 提交按钮 */
 function submitForm() {
-  dictFormRef.value.validate((valid:any) => {
+  dictFormRef.value.validate((valid: any) => {
     if (valid) {
       if (form.value.dictId != undefined) {
         updateType(form.value).then(() => {
@@ -229,7 +229,7 @@ function handleDelete(row: { [key: string]: any }) {
   proxy.$modal
     .confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？')
     .then(function () {
-      return delType({ids: dictIds})
+      return delType({ ids: dictIds })
     })
     .then(() => {
       getList()

@@ -168,8 +168,8 @@ function resetQuery() {
   handleQuery()
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection:any) {
-  ids.value = selection.map((item:any) => item.noticeId)
+function handleSelectionChange(selection: any) {
+  ids.value = selection.map((item: any) => item.noticeId)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
@@ -191,7 +191,7 @@ function handleUpdate(row: { [key: string]: any }) {
 }
 /** 提交按钮 */
 function submitForm() {
-  noticeFormRef.value.validate((valid:any) => {
+  noticeFormRef.value.validate((valid: any) => {
     if (valid) {
       if (form.value.noticeId != undefined) {
         updateNotice(form.value).then(() => {
@@ -220,7 +220,7 @@ function handleDelete(row: { [key: string]: any }) {
   proxy.$modal
     .confirm('是否确认删除公告编号为"' + noticeIds + '"的数据项？')
     .then(function () {
-      return delNotice({ids: noticeIds})
+      return delNotice({ ids: noticeIds })
     })
     .then(() => {
       getList()

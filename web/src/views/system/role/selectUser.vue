@@ -9,12 +9,8 @@
         <el-input v-model="queryParams.phoneNumber" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="handleQuery">
-          <ep:search /> 搜索
-        </el-button>
-        <el-button @click="resetQuery">
-          <ep:refresh /> 重置
-        </el-button>
+        <el-button type="primary" @click="handleQuery"> <ep:search /> 搜索 </el-button>
+        <el-button @click="resetQuery"> <ep:refresh /> 重置 </el-button>
       </el-form-item>
     </el-form>
     <el-row>
@@ -86,8 +82,8 @@ function clickRow(row: { [key: string]: any }) {
   userTableRef.value.toggleRowSelection(row)
 }
 // 多选框选中数据
-function handleSelectionChange(selection:any) {
-  userIds.value = selection.map((item:any) => item.userId)
+function handleSelectionChange(selection: any) {
+  userIds.value = selection.map((item: any) => item.userId)
 }
 // 查询表数据
 function getList() {

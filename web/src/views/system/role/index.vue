@@ -255,7 +255,7 @@ function handleDelete(row: { [key: string]: any }) {
   proxy.$modal
     .confirm('是否确认删除角色编号为"' + roleIds + '"的数据项?')
     .then(function () {
-      return delRole({ids: roleIds})
+      return delRole({ ids: roleIds })
     })
     .then(() => {
       getList()
@@ -285,7 +285,7 @@ function handleStatusChange(row: { [key: string]: any }) {
   proxy.$modal
     .confirm('确认要"' + text + '""' + row.roleName + '"角色吗?')
     .then(function () {
-      return changeRoleStatus({roleId:row.roleId, status: row.status})
+      return changeRoleStatus({ roleId: row.roleId, status: row.status })
     })
     .then(() => {
       proxy.$modal.msgSuccess(text + '成功')
@@ -367,8 +367,8 @@ function handleUpdate(row: { [key: string]: any }) {
   })
 }
 /** 根据角色ID查询菜单树结构 */
-async function getRoleMenuTreeselect(roleId:number) {
-  const response = await roleMenuTreeselect({roleId: roleId});
+async function getRoleMenuTreeselect(roleId: number) {
+  const response = await roleMenuTreeselect({ roleId: roleId })
   menuOptions.value = response.data.menus
   return response
 }
@@ -419,7 +419,7 @@ function getMenuAllCheckedKeys() {
 }
 /** 提交按钮 */
 function submitForm() {
-  roleFormRef.value.validate((valid:any) => {
+  roleFormRef.value.validate((valid: any) => {
     if (valid) {
       if (form.value.roleId != undefined) {
         form.value.menuIds = getMenuAllCheckedKeys()
