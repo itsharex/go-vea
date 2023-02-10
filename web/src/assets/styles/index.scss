@@ -191,3 +191,11 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+.horizontal-divider {
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin: 10px 0;
+  border-bottom: 1px solid #dfe6ec;
+}
