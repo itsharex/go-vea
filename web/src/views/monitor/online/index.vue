@@ -8,14 +8,14 @@
         <el-input v-model="queryParams.username" placeholder="请输入用户名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" @click="handleQuery"><ep:search />搜索</el-button>
+        <el-button @click="resetQuery"><ep:refresh />重置</el-button>
       </el-form-item>
     </el-form>
-    <el-table v-loading="loading" :data="onlineList.slice((pageNum - 1) * pageSize, pageNum * pageSize)" style="width: 100%">
+    <el-table v-loading="loading" :data="onlineList" style="width: 100%">
       <el-table-column label="序号" width="50" type="index" align="center">
         <template #default="scope">
-          <span>{{ (pageNum - 1) * pageSize + scope.$index + 1 }}</span>
+          <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="会话编号" align="center" prop="tokenId" :show-overflow-tooltip="true" />
@@ -32,27 +32,27 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button type="text" icon="Delete" @click="handleForceLogout(scope.row)" v-hasPermi="['monitor:online:forceLogout']">强退</el-button>
+          <el-button type="danger" link @click="handleForceLogout(scope.row)" v-hasPerms="['monitor:online:forceLogout']"><ep:delete />强退</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total > 0" :total="total" v-model:page="pageNum" v-model:limit="pageSize" />
+    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" />
   </div>
 </template>
 
-<script setup name="Online">
-import { forceLogout, list as initData } from '@/api/monitor/online'
+<script lang="ts" setup name="Online">
+import { forceLogout, listOnlineUser } from '@/api/monitor/online'
 
 const { proxy } = getCurrentInstance()
 
 const onlineList = ref([])
 const loading = ref(true)
 const total = ref(0)
-const pageNum = ref(1)
-const pageSize = ref(10)
 
 const queryParams = ref({
+  pageNum: 1,
+  pageSize: 10,
   ipaddr: undefined,
   username: undefined
 })
@@ -60,15 +60,15 @@ const queryParams = ref({
 /** 查询登录日志列表 */
 function getList() {
   loading.value = true
-  initData(queryParams.value).then(response => {
-    onlineList.value = response.rows
-    total.value = response.total
+  listOnlineUser(queryParams.value).then(response => {
+    onlineList.value = response.data.rows
+    total.value = response.data.total
     loading.value = false
   })
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  pageNum.value = 1
+  queryParams.value.pageNum = 1
   getList()
 }
 /** 重置按钮操作 */

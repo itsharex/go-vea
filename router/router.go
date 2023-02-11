@@ -170,6 +170,14 @@ func InitRouter() {
 		serverInfoRouters.GET("info", serverApi.GetServerInfo)
 	}
 
+	// 在线用户
+	onlineUserRouters := monitorRoutes.Group("online")
+	onlineUserApi := monitorctl.OnlineUserApi{}
+	{
+		onlineUserRouters.POST("list", onlineUserApi.GetOnlineUser)
+		onlineUserRouters.DELETE(":tokenId", onlineUserApi.ForceLogout)
+	}
+
 	// 登录日志
 	loginLogRoutes := monitorRoutes.Group("loginLog")
 	loginLogApi := monitorctl.SysLoginLog{}
