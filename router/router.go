@@ -11,9 +11,11 @@ import (
 
 func InitRouter() {
 	r := gin.New()
+	r.Use(gin.Recovery())
 	// logrus 日志
 	r.Use(middleware.Logger())
-	r.Use(gin.Recovery())
+	// 操作日志
+	r.Use(middleware.OperationRecord())
 
 	captcha := common.CaptchaHandler{}
 	r.GET("/captchaImage", captcha.GetCaptcha)
@@ -29,14 +31,12 @@ func InitRouter() {
 	systemRoutes := r.Group("system")
 	// jwt 认证
 	systemRoutes.Use(middleware.JWT())
-	// auth 鉴权
-	//systemRoutes.Use(middleware.Auth())
 
 	// 配置管理
 	configRoutes := systemRoutes.Group("config")
 	configApi := systemctl.SysConfigApi{}
 	{
-		configRoutes.POST("/list", configApi.GetSysConfigList)
+		configRoutes.POST("/list", configApi.GetSysConfigList, middleware.HasPerm("system:config:list"))
 		configRoutes.GET("/:configId", configApi.GetSysConfigById)
 		configRoutes.GET("/configKey/:configKey", configApi.GetSysConfigByKey)
 		configRoutes.POST("", configApi.AddSysConfig)

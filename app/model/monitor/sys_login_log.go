@@ -13,13 +13,13 @@ const TableNameSysLoginLog = "sys_login_log"
 // SysLoginLog mapped from table <sys_login_log>
 type SysLoginLog struct {
 	ID            int64      `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true" json:"id"` // 访问ID
-	Username      *string    `gorm:"column:username;type:varchar(50)" json:"username"`              // 用户账号
-	Ipaddr        *string    `gorm:"column:ipaddr;type:varchar(128)" json:"ipaddr"`                 // 登录IP地址
-	LoginLocation *string    `gorm:"column:login_location;type:varchar(255)" json:"loginLocation"`  // 登录地点
-	Browser       *string    `gorm:"column:browser;type:varchar(50)" json:"browser"`                // 浏览器类型
-	Os            *string    `gorm:"column:os;type:varchar(50)" json:"os"`                          // 操作系统
-	Status        *string    `gorm:"column:status;type:char(1);default:0" json:"status"`            // 登录状态（0成功 1失败）
-	Msg           *string    `gorm:"column:msg;type:varchar(255)" json:"msg"`                       // 提示消息
+	Username      string     `gorm:"column:username;type:varchar(50)" json:"username"`              // 用户账号
+	Ipaddr        string     `gorm:"column:ipaddr;type:varchar(128)" json:"ipaddr"`                 // 登录IP地址
+	LoginLocation string     `gorm:"column:login_location;type:varchar(255)" json:"loginLocation"`  // 登录地点
+	Browser       string     `gorm:"column:browser;type:varchar(50)" json:"browser"`                // 浏览器类型
+	Os            string     `gorm:"column:os;type:varchar(50)" json:"os"`                          // 操作系统
+	Status        int64      `gorm:"column:status;type:tinyint(3);default:0" json:"status"`         // 登录状态（0成功 1失败）
+	Msg           string     `gorm:"column:msg;type:varchar(255)" json:"msg"`                       // 提示消息
 	LoginTime     *time.Time `gorm:"column:login_time;type:datetime" json:"loginTime"`              // 访问时间
 }
 

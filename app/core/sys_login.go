@@ -5,11 +5,14 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"go-vea/app/dao/sysdao"
+	"go-vea/app/model/monitor"
 	"go-vea/app/model/system"
 	"go-vea/app/model/system/request"
 	"go-vea/app/model/system/response"
+	"go-vea/app/service/monitorsrv"
 	"go-vea/app/service/syssrv"
 	"go-vea/global"
+	"go-vea/util"
 	"go-vea/util/captcha"
 	"time"
 )
@@ -40,7 +43,10 @@ func (s *SysLoginService) Login(ctx *gin.Context, loginBody *request.LoginBody) 
 		global.Logger.Error(err)
 		return "", err
 	}
-	err = recordLoginInfo(ctx, loginUser.UserID)
+	go func() {
+		err = recordLoginInfo(ctx, loginUser.UserID)
+		err = recordLoginLog(ctx, loginUser.SysUserResp.SysUser.Username)
+	}()
 	return token, err
 }
 
@@ -48,8 +54,7 @@ func recordLoginInfo(ctx *gin.Context, userId int64) error {
 	sysUserDao := sysdao.NewSysUserDao(ctx)
 	user := &system.SysUser{}
 	user.UserID = userId
-	// todo
-	user.LoginIP = "127.0.0.1"
+	user.LoginIP = ctx.ClientIP()
 	now := time.Now()
 	user.LoginDate = &now
 
@@ -58,6 +63,18 @@ func recordLoginInfo(ctx *gin.Context, userId int64) error {
 		return err
 	}
 	return nil
+}
+
+func recordLoginLog(ctx *gin.Context, username string) error {
+	now := time.Now()
+	sysLoginLog := &monitor.SysLoginLog{
+		Username:  username,
+		Ipaddr:    ctx.ClientIP(),
+		Status:    util.StatusConvert(ctx.Writer.Status()),
+		LoginTime: &now,
+	}
+	err := monitorsrv.SysLoginLogSrv.AddSysLoginLog(ctx, sysLoginLog)
+	return err
 }
 
 func loadUserByUsername(ctx *gin.Context, loginBody *request.LoginBody) (*response.LoginUser, error) {

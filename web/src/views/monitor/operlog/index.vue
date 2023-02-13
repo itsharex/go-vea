@@ -117,7 +117,7 @@
           <el-col :span="12">
             <el-form-item label="操作状态：">
               <div v-if="form.status === 0">正常</div>
-              <div v-else-if="form.status === 1">失败</div>
+              <div v-else>失败</div>
             </el-form-item>
           </el-col>
           <el-col :span="12">

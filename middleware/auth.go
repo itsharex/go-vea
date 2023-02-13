@@ -61,10 +61,10 @@ func HasRole(role string) gin.HandlerFunc {
 }
 
 func hasPermissions(permissions []string, perm string) bool {
-	if perm == "*:*:*" {
-		return true
-	}
 	for _, permission := range permissions {
+		if permission == "*:*:*" {
+			return true
+		}
 		if perm == permission {
 			return true
 		}
