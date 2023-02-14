@@ -35,13 +35,13 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain :disabled="multiple" @click="handleDelete" v-hasPerms="['monitor:operlog:remove']"><ep:delete /> 删除</el-button>
+        <el-button type="danger" plain :disabled="multiple" @click="handleDelete" v-hasPerms="['monitor:operLog:remove']"><ep:delete /> 删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain @click="handleClean" v-hasPerms="['monitor:operlog:remove']"><ep:delete />清空</el-button>
+        <el-button type="danger" plain @click="handleClean" v-hasPerms="['monitor:operLog:remove']"><ep:delete />清空</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain @click="handleExport" v-hasPerms="['monitor:operlog:export']"><ep:download /> 导出</el-button>
+        <el-button type="warning" plain @click="handleExport" v-hasPerms="['monitor:operLog:export']"><ep:download /> 导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -86,7 +86,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" @click="handleView(scope.row, scope.index)" v-hasPerms="['monitor:operlog:query']"><ep:view /> 详细</el-button>
+          <el-button link type="primary" @click="handleView(scope.row, scope.index)" v-hasPerms="['monitor:operLog:query']"><ep:view /> 详细</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -3,7 +3,10 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"go-vea/app/common/constant"
+	"go-vea/app/core"
 	"go-vea/app/model/monitor"
 	"go-vea/app/service/monitorsrv"
 	"go-vea/global"
@@ -15,13 +18,12 @@ import (
 	"time"
 )
 
-func OperationRecord() gin.HandlerFunc {
+func OperationRecord(title string, businessType constant.BusinessType) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
+		var err error
 		// 请求body
 		var reqBody []byte
 		if ctx.Request.Method != http.MethodGet {
-			var err error
 			reqBody, err = io.ReadAll(ctx.Request.Body)
 			if err != nil {
 				global.Logger.Error("read body from request error:", err)
@@ -50,9 +52,15 @@ func OperationRecord() gin.HandlerFunc {
 		ctx.Writer = writer
 
 		handler := ctx.HandlerName()
+		loginUser, _ := core.TokenSrv.GetLoginUser(ctx)
 		now := time.Now()
 		sysOperLog := monitor.SysOperLog{
 			OperIP:        ctx.ClientIP(),
+			Title:         title,
+			OperName:      loginUser.SysUserResp.SysUser.Username,
+			DeptName:      loginUser.SysUserResp.SysDept.DeptName,
+			BusinessType:  int64(businessType),
+			OperatorType:  constant.OPER_MANAGE,
 			RequestMethod: ctx.Request.Method,
 			OperURL:       ctx.Request.URL.Path,
 			Status:        util.StatusConvert(ctx.Writer.Status()),
@@ -61,10 +69,15 @@ func OperationRecord() gin.HandlerFunc {
 			OperParam:     string(reqBody),
 			JSONResult:    writer.body.String(),
 		}
-
+		if err != nil {
+			sysOperLog.ErrorMsg = err.Error()
+		}
+		// Next() 进入下一个middleware
 		ctx.Next()
+		latency := time.Since(now)
+		fmt.Println(latency)
 
-		err := monitorsrv.SysOperLogSrv.AddSysOperLog(ctx, &sysOperLog)
+		err = monitorsrv.SysOperLogSrv.AddSysOperLog(ctx, &sysOperLog)
 		if err != nil {
 			global.Logger.Error("oper log err")
 		}

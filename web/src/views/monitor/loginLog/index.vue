@@ -30,16 +30,16 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain :disabled="multiple" @click="handleDelete" v-hasPerms="['monitor:logininfor:remove']"><ep:delete /> 删除</el-button>
+        <el-button type="danger" plain :disabled="multiple" @click="handleDelete" v-hasPerms="['monitor:loginLog:remove']"><ep:delete /> 删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain @click="handleClean" v-hasPerms="['monitor:logininfor:remove']"><ep:delete />清空</el-button>
+        <el-button type="danger" plain @click="handleClean" v-hasPerms="['monitor:loginLog:remove']"><ep:delete />清空</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary" plain :disabled="single" @click="handleUnlock" v-hasPerms="['monitor:logininfor:unlock']"><ep:unlock /> 解锁</el-button>
+        <el-button type="primary" plain :disabled="single" @click="handleUnlock" v-hasPerms="['monitor:loginLog:unlock']"><ep:unlock /> 解锁</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain @click="handleExport" v-hasPerms="['monitor:logininfor:export']"><ep:download /> 导出</el-button>
+        <el-button type="warning" plain @click="handleExport" v-hasPerms="['monitor:loginLog:export']"><ep:download /> 导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>

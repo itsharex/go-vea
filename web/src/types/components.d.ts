@@ -71,7 +71,6 @@ declare module '@vue/runtime-core' {
     'Ep:plus': typeof import('~icons/ep/plus')['default']
     'Ep:questionFilled': typeof import('~icons/ep/question-filled')['default']
     'Ep:refresh': typeof import('~icons/ep/refresh')['default']
-    'Ep:Refresh': typeof import('~icons/ep/-refresh')['default']
     'Ep:refreshLeft': typeof import('~icons/ep/refresh-left')['default']
     'Ep:refreshRight': typeof import('~icons/ep/refresh-right')['default']
     'Ep:right': typeof import('~icons/ep/right')['default']
