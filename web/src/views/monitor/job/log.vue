@@ -114,7 +114,7 @@
   </div>
 </template>
 
-<script setup name="JobLog">
+<script lang="ts" setup name="JobLog">
 import { getJob } from '@/api/monitor/job'
 import { listJobLog, delJobLog, cleanJobLog } from '@/api/monitor/jobLog'
 

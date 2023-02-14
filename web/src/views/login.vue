@@ -49,8 +49,8 @@ const router = useRouter()
 const route = useRoute()
 
 const loginForm = ref({
-  username: 'admin',
-  password: 'admin123',
+  username: '',
+  password: '',
   rememberMe: false,
   code: '',
   uuid: ''

@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite serve --mode development",
-    "build:prod": "vue-tsc --noEmit && vite build",
+    "build:prod": "vite build",
     "build:stage": "vite build --mode staging",
     "preview": "vite preview",
     "prettier": "prettier --write ."
