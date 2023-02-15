@@ -75,6 +75,9 @@ func OperationRecord(title string, businessType constant.BusinessType) gin.Handl
 		// Next() 进入下一个middleware
 		ctx.Next()
 		latency := time.Since(now)
+		// IP属地
+		region, err := global.IpSearcher.SearchByStr(ctx.ClientIP())
+		sysOperLog.OperLocation = region
 		fmt.Println(latency)
 
 		err = monitorsrv.SysOperLogSrv.AddSysOperLog(ctx, &sysOperLog)

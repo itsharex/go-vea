@@ -67,13 +67,15 @@ func recordLoginInfo(ctx *gin.Context, userId int64) error {
 
 func recordLoginLog(ctx *gin.Context, username string) error {
 	now := time.Now()
+	region, err := global.IpSearcher.SearchByStr(ctx.ClientIP())
 	sysLoginLog := &monitor.SysLoginLog{
-		Username:  username,
-		Ipaddr:    ctx.ClientIP(),
-		Status:    util.StatusConvert(ctx.Writer.Status()),
-		LoginTime: &now,
+		Username:      username,
+		Ipaddr:        ctx.ClientIP(),
+		Status:        util.StatusConvert(ctx.Writer.Status()),
+		LoginTime:     &now,
+		LoginLocation: region,
 	}
-	err := monitorsrv.SysLoginLogSrv.AddSysLoginLog(ctx, sysLoginLog)
+	err = monitorsrv.SysLoginLogSrv.AddSysLoginLog(ctx, sysLoginLog)
 	return err
 }
 

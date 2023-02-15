@@ -23,7 +23,7 @@ func (*ServerInfoService) GetServerInfo(ctx context.Context) (*response.ServerIn
 
 	memStat, _ := mem.VirtualMemory()
 
-	parts, err := disk.Partitions(true)
+	parts, err := disk.Partitions(false)
 	var disks []*response.Disk
 	for _, part := range parts {
 		d, _ := disk.Usage(part.Mountpoint)
