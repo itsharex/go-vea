@@ -32,3 +32,6 @@ redis:
   addr: '127.0.0.1:6379'
   password: 'redis123456'
   rdb: 3
+
+file:
+  path: 'uploads'

@@ -8,6 +8,7 @@ import (
 	"go-vea/app/controller/systemctl"
 	"go-vea/configs"
 	"go-vea/middleware"
+	"net/http"
 )
 
 func InitRouter() {
@@ -15,6 +16,8 @@ func InitRouter() {
 	r.Use(gin.Recovery())
 	// logrus 日志
 	r.Use(middleware.Logger())
+	// 静态文件
+	r.StaticFS("uploads", http.Dir("uploads"))
 
 	captcha := common.CaptchaHandler{}
 	r.GET("/captchaImage", captcha.GetCaptcha)
@@ -30,6 +33,13 @@ func InitRouter() {
 	systemRoutes := r.Group("system")
 	// jwt 认证
 	systemRoutes.Use(middleware.JWT())
+
+	// 文件处理
+	fileRoutes := systemRoutes.Group("file")
+	fileApi := common.FileApi{}
+	{
+		fileRoutes.POST("/upload", fileApi.UploadFile)
+	}
 
 	// 配置管理
 	configRoutes := systemRoutes.Group("config")
