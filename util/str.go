@@ -53,6 +53,14 @@ func ConvertFileSize(size uint64) string {
 	}
 }
 
+func IsNotNull(obj interface{}) bool {
+	return !IsNull(obj)
+}
+
+func IsNull(obj interface{}) bool {
+	return obj == nil || obj == ""
+}
+
 func Decimal(value float64) float64 {
 	value, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", value), 64)
 	return value

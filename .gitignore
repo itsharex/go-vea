@@ -42,7 +42,7 @@ logs
 *.iml
 *.ipr
 
-docs/.vuepress/dist
+uploads
 
 ### NetBeans ###
 /nbproject/private/
